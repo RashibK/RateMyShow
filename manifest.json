@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "RateMyShow",
+  "version": "1.0",
+
+  "description": "Lets you login through MyAnimeList (and more others, soon...) to rate your favourite shows",
+
+  "icons": {
+      "96": "icons/main-logo.svg"
+  },
+
+  "browser_action": {
+     "default_title": "RateMyShow",
+     "default_popup": "popup/main.html"
+  },
+
+  "permissions": ["identity", "activeTab"],
+
+  "browser_specific_settings": {
+"gecko": {
+  "id": "ratemyshow@rashibk"
+}
+}
+
+}
