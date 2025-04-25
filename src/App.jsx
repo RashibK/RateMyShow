@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import './App.css'
+import './App.css';
+import Login from './pages/Login';
 
 function App() {
   return (
   <>
-  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure beatae magnam voluptatum laudantium blanditiis numquam nisi saepe, vero aliquam aperiam! Vero velit tenetur eveniet.</p>
-  
+    <Login />  
     </>
   )
 }
