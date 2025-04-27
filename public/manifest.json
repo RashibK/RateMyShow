@@ -14,7 +14,7 @@
      "default_popup": "index.html"
   },
 
-  "permissions": ["identity", "activeTab"],
+  "permissions": ["identity", "activeTab", "https://myanimelist.net/v1/oauth2/token", "storage", "https://api.myanimelist.net/v2/"],
 
   "browser_specific_settings": {
 "gecko": {
