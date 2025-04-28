@@ -1,11 +1,22 @@
 import './App.css';
 import Login from './pages/Login';
+import HomePage from './pages/HomePage';
+import { Routes, Route } from 'react-router-dom';
+import PrivateRoutes from './utils/PrivateRoutes';
 
 function App() {
   return (
   <>
-    <Login />  
-    </>
+  <Routes>
+    
+    <Route path='/login' element={<Login />} />
+    
+    <Route element={<PrivateRoutes />}>
+    <Route path='/' element = {<HomePage />} />
+    </Route>
+
+  </Routes>
+  </>
   )
 }
 

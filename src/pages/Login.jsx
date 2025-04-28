@@ -1,12 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { malOauth, exchangeCodeForRefreshToken } from '../features/auth/authSlice';
+import { fetchUserData } from '../features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
+    const userData = useSelector((state) => state.user.userData)
     const data = {
         anime: ['MyAnimeList', 'AniList'],
         movie: ['LetterBoxd', 'Trakt'],
@@ -29,38 +32,49 @@ function Login() {
 
         if (category === "anime") {
             if (provider === "myanimelist") {
-                const result = await dispatch(malOauth());
-                dispatch(exchangeCodeForRefreshToken(result.payload))
-                
+                try {
+                    const code = await dispatch(malOauth()).unwrap();
+
+                    await dispatch(exchangeCodeForRefreshToken(code));
+
+                    await dispatch(fetchUserData());
+                    navigate('/');
+
+                }catch(error) {
+                    console.log('Error:', error)
+                }
+              
             }
         }
 
     }
 
   return (
-    <div>
-        <div className="title">Log In</div>
-        <form onSubmit={onSubmit}>
-        <div className="category">
-            <label for='select-category'>Category</label>
-            <select name="contentCategory" id="select-category" value={selectedFirstOption} onChange={getProvider}>
-                <option>Select a Category</option>
-                <option value='anime'>Anime</option>
-                <option value='movie'>Movie</option>
-                <option value='tvshow'>TV Show</option> 
-            </select>
-        </div>
-        <div className="provider">
-            <label for='select-provider'>Provider</label>
-            <select name="providerOptions" id="select-provider" >
-                {selectSecondOption.map(element => (
-                    <option key={element.toLowerCase()} value={element.toLowerCase()}>{element}</option>
-                ))}
-
-            </select>
-        </div>
-        <button type='submit'>Authenticate</button>
-        </form>
+<div>
+                    <div>
+                    <div className="title">Log In</div>
+                    <form onSubmit={onSubmit}>
+                    <div className="category">
+                        <label for='select-category'>Category</label>
+                        <select name="contentCategory" id="select-category" value={selectedFirstOption} onChange={getProvider}>
+                            <option>Select a Category</option>
+                            <option value='anime'>Anime</option>
+                            <option value='movie'>Movie</option>
+                            <option value='tvshow'>TV Show</option> 
+                        </select>
+                    </div>
+                    <div className="provider">
+                        <label for='select-provider'>Provider</label>
+                        <select name="providerOptions" id="select-provider" >
+                            {selectSecondOption.map(element => (
+                                <option key={element.toLowerCase()} value={element.toLowerCase()}>{element}</option>
+                            ))}
+            
+                        </select>
+                    </div>
+                    <button type='submit'>Authenticate</button>
+                    </form>
+                </div>
     </div>
   )
 }
