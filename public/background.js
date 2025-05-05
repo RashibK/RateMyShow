@@ -1,6 +1,5 @@
 import { createCodeVerifier, createStateToken } from "./background/oAuthUtils.js";
 
-const malAccessToken = await browser.storage.session.get('mal_access_token');
 const malRefreshToken = await browser.storage.local.get('mal_refresh_token');
 
 
@@ -34,6 +33,11 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse ) => {
             const userData = await MALAuth();
             sendResponse(userData);
         })();
+    } else if (message.type === 'logout') {
+        browser.storage.session.remove('userInfo');
+        browser.storage.local.remove('mal_refresh_token');
+        
+        sendResponse({'message': 'tokens_deleted'})
     }
 
     return true;
