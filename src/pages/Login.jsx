@@ -2,14 +2,13 @@ import React from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { malOauth, exchangeCodeForRefreshToken } from '../features/auth/authSlice';
-import { fetchUserData } from '../features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userData = useSelector((state) => state.user.userData)
+ 
     const data = {
         anime: ['MyAnimeList', 'AniList'],
         movie: ['LetterBoxd', 'Trakt'],
@@ -33,11 +32,7 @@ function Login() {
         if (category === "anime") {
             if (provider === "myanimelist") {
                 try {
-                    const code = await dispatch(malOauth()).unwrap();
-
-                    await dispatch(exchangeCodeForRefreshToken(code));
-
-                    await dispatch(fetchUserData());
+                      const userData = await browser.runtime.sendMessage({type: 'start_mal_auth'})
                     navigate('/');
 
                 }catch(error) {

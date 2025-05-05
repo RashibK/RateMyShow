@@ -1,37 +1,40 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { malRefreshAccessToken } from "../features/auth/authSlice";
-import { fetchUserData } from "../features/user/userSlice";
 
 function PrivateRoutes() {
-    const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    
-    const dispatch = useDispatch();
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         async function getUserData() {
+            
             try {
-                const result = await browser.storage.session.get('user_data');
-                console.log('inside the private route:', result.user_data.name)
-                setUserData(result.user_data);
-
-
+                console.log('Hello from private route');
+                const response = await browser.runtime.sendMessage({type: 'send_user_data'});
+                         
+                console.log('second time around:', response)
+                
+                if (response?.name) {
+                    console.log('Hello from place where there is response data');
+                    setUserData(response);
+                }
             }catch(error) {
-                await dispatch(malRefreshAccessToken());
-                await dispatch(fetchUserData());
-            }finally{
-                setLoading(false)
+                console.log(error)
+            }finally {
+                setLoading(false);
             }
-        }
+
+    }        
         getUserData();
     }, [])
+
 
     if(loading) return (<div>Loading...</div>)
         
     return (
-        (!userData || (Object.keys(userData).length === 0))  ? <Navigate to='/login' /> :  <Outlet />
+         userData ? <Outlet /> : <Navigate to="/login" />
     )
 
 }
