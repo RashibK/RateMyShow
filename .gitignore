@@ -26,3 +26,5 @@ dist-ssr
 
 #some other stuffs
 randomdata.csv
+
+src/utils/preview.html
