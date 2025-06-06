@@ -16,7 +16,7 @@ function HomePage() {
   }, [])
 
   return (
-    <div>Hello {userData?.name}</div>
+    <div className="text-white">Hello {userData?.name}</div>
   )
 }
 

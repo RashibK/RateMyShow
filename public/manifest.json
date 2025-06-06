@@ -15,7 +15,6 @@
   "type": "module"
 },
 
-
   "browser_action": {
      "default_title": "RateMyShow",
      "default_popup": "index.html"
