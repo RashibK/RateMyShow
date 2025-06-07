@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { malOauth, exchangeCodeForRefreshToken } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
+import AnimeToggle from '../components/AnimeToggle';
 
 function Login() {
 
@@ -45,7 +46,70 @@ function Login() {
     }
 
   return (
-<div>
+    <div className='h-[calc(600px-48px)] flex justify-center items-center w-full'>
+        <div className='grid grid-rows-3 gap-4 h-[90%] w-[90%]'>
+            <section className="anime-card border border-border bg-[#1c1f24] flex flex-col rounded-xl p-4 gap-4 shadow-sm">
+                <div className="flex justify-between items-center border-b border-border pb-2">
+                    <div className="provider-type text-white font-semibold text-sm">
+                        Anime
+                    </div>
+
+                        < AnimeToggle />
+
+                </div>
+                <div className="main-card flex gap-4">
+                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 mt-2">
+                        <div className="bg-white w-10 h-10 overflow-hidden border border-border rounded-full"> 
+                            <img src='https://cdn.myanimelist.net/s/common/userimages/0b067390-6d23-45f0-959c-226fc16bf87b_225w?s=1ed5cee1e64005f9a9b1070eeb3ec927' className='w-full h-full rounded-full cursor-pointer' />
+                            </div>
+
+
+                            <span className='text-white text-sm'>Connected as <span className='font-medium cursor-pointer'>poke1</span></span>
+                        <div className='flex'>
+                            <button className='mb-0.5 px-4 py-1 text-xs bg-red-700 hover:bg-red-600 text-white rounded-lg transition-all'>Disconnect</button>
+                        </div>
+                    </div>
+
+
+                   
+                </div>
+            </section>
+            <section className="movie-card border border-border bg-[#1c1f24] flex flex-col rounded-xl p-4 gap-4 shadow-sm">
+              <div className="flex justify-between items-center border-b border-border pb-2">
+                    <div className="provider-type text-white font-semibold text-sm">
+                        Movie
+                    </div>
+
+
+
+                </div>
+                <div className="main-card flex gap-4">
+                    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 mt-2">
+                        <div className="bg-white w-10 h-10 overflow-hidden border border-border rounded-full"> 
+                            <img src='https://cdn.myanimelist.net/s/common/userimages/0b067390-6d23-45f0-959c-226fc16bf87b_225w?s=1ed5cee1e64005f9a9b1070eeb3ec927' className='w-full h-full rounded-full cursor-pointer' />
+                            </div>
+
+
+                            <span className='text-white text-sm'>Connected as <span className='font-medium cursor-pointer'>poke1</span></span>
+                        <div className='flex'>
+                            <button className='mb-0.5 px-4 py-1 text-xs bg-red-700 hover:bg-red-600 text-white rounded-lg transition-all'>Disconnect</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section className="tv-shows-card border border-border bg-[#1c1f24] flex flex-col rounded-xl p-4 gap-4 shadow-sm ">
+                TV Shows
+            </section>
+        </div>
+
+    </div>
+
+
+  )
+}
+
+export default Login
+{/* <div>
                     <div>
                     <div className="title">Log In</div>
                     <form onSubmit={onSubmit}>
@@ -70,8 +134,5 @@ function Login() {
                     <button type='submit'>Authenticate</button>
                     </form>
                 </div>
-    </div>
-  )
-}
-
-export default Login
+    </div> */}
+    

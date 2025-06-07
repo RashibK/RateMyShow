@@ -13,7 +13,7 @@ function NavBar() {
     <div>
       {/* {userData && <Settings />} */}
          
-           <nav className='navbar bg-[#1a2024] h-12 w-full'>
+            <nav className='flex navbar bg-nav border-b border-border h-12 w-full'>
          <ul className="flex justify-between items-center w-full pr-4 pl-2 h-full">
       <li className='list-none'>
           <motion.div 
