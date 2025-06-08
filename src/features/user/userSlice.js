@@ -21,25 +21,44 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // })
 
-
 const initialState = {
-    userData: null
-}
+  animeUserData: null,
+  tvShowUserData: null,
+  movieUserData: null,
+};
 
 export const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        addUserData: (state, action) => {
-        state.userData = action.payload;
+  name: "user",
+  initialState,
+  reducers: {
+    addAnimeUserData: (state, action) => {
+      state.animeUserData = action.payload;
     },
-    deleteUserData: (state) => {
-        state.userData = null;
-    }
-},
+    addMovieUserData: (state, action) => {
+      state.movieUserData = action.payload;
+    },
+    addTvShowUserData: (state, action) => {
+      state.tvShowUserData = action.payload;
+    },
 
-})
+    deleteAnimeUserData: (state) => {
+      state.animeUserData = null;
+    },
+    deleteMovieUserData: (state) => {
+      state.movieUserData = null;
+    },
+    deleteTvShowUserData: (state) => {
+      state.tvShowUserData = null;
+    },
+  },
+});
 
-export const { addUserData, deleteUserData } = userSlice.actions
-export default userSlice.reducer
-
+export const {
+  addAnimeUserData,
+  addMovieUserData,
+  addTvShowUserData,
+  deleteAnimeUserData,
+  deleteMovieUserData,
+  deleteTvShowUserData,
+} = userSlice.actions;
+export default userSlice.reducer;

@@ -1,22 +1,29 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addUserData } from "../features/user/userSlice";
+import { addAnimeUserData } from "../features/user/userSlice";
+import { Link } from "react-router-dom";
+import { LogIn } from "lucide-react";
+import Login from "./Login";
 
 function HomePage() {
 
-  const userData = useSelector((state) => state.user.userData);
+  const animeUserData = useSelector((state) => state.user.animeUserData);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const getUserData = async function () {
-      const userData = await browser.runtime.sendMessage({type: 'send_user_data'})
-      dispatch(addUserData(userData))
-    }
-    getUserData();
-  }, [])
+  // useEffect(() => {
+  //   const getUserData = async function () {
+  //     const userData = await browser.runtime.sendMessage({type: 'send_user_data', provider:'mal'})
+  //     dispatch(addAnimeUserData(userData))
+  //   }
+  //   getUserData();
+  // }, [])
 
   return (
-    <div className="text-white">Hello {userData?.name}</div>
+    <>
+        <div className="text-white">Hello {animeUserData?.name}</div>
+    <Link to='/login' element={<Login />}>Login</Link>
+    </>
+
   )
 }
 

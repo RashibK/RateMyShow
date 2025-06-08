@@ -1,7 +1,7 @@
 import React, { use, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteUserData } from '../features/user/userSlice';
+
 
 function Settings() {
     
