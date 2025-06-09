@@ -9,20 +9,15 @@ import { useNavigate } from "react-router-dom";
 import AnimeToggle from "../components/AnimeToggle";
 import MovieToggle from "../components/MovieToggle";
 import { userSlice } from "../features/user/userSlice";
+import { deleteAnimeUserData } from "../features/user/userSlice";
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [animeUserData, setAnimeUserData] = useState(
-    useSelector((state) => state.user.animeUserData)
-  );
-  const [movieUserData, setMovieUserData] = useState(
-    useSelector((state) => state.user.movieUserData)
-  );
-  const [tvShowUserData, setTvShowUserData] = useState(
-    useSelector((state) => state.user.tvShowUserData)
-  );
+  const animeUserData = useSelector((state) => state.user.animeUserData);
+  const movieUserData = useSelector((state) => state.user.movieUserData);
+  const tvShowUserData = useSelector((state) => state.user.tvShowUserData);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -52,15 +47,15 @@ function Login() {
 
   function onDisconnect(provider) {
     if (provider === "mal") {
-      async () => {
+      (async () => {
         const response = await browser.runtime.sendMessage({
           type: "logout",
           provider: provider,
         });
         if (response.message === "mal_tokens_deleted") {
-          dispatch(deleteUserData());
+          dispatch(deleteAnimeUserData());
         }
-      };
+      })();
     }
   }
 
@@ -80,9 +75,8 @@ function Login() {
             });
             navigate("/");
           })();
-        }
-        else {
-          navigate('/');
+        } else {
+          navigate("/");
         }
       })();
     }

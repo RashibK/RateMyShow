@@ -131,6 +131,7 @@ export async function fetchUserData() {
   );
 
   const malUserInfo = await response.json();
+  malUserInfo["provider"] = "mal";
 
   // keep the user info in session storage
   browser.storage.session.set({ malUserInfo: malUserInfo });
@@ -169,7 +170,7 @@ async function refreshAccessToken() {
 async function getMALUserData(sendResponse) {
   const userData = await browser.storage.session.get("malUserInfo");
   console.log("here is the user data that i get from bg: ", userData);
-  if (userData.malUserInfo && Object.keys(userData.malUserInfo).length > 0) {
+  if (userData.malUserInfo && Object.keys(userData.malUserInfo).length > 2) {
     sendResponse(userData.malUserInfo);
   } else {
     if (Object.keys(malRefreshToken).length > 0) {
