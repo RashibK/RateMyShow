@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // export const fetchUserData = createAsyncThunk('user/fetchUserData', async () => {
 //     console.log('Hey I am in fetching data thing!!!')
@@ -20,6 +20,35 @@ import { createSlice } from "@reduxjs/toolkit";
 //     return userInfo;
 
 // })
+
+// function onDisconnect(provider) {
+//   // const dispatch = useDispatch();
+
+//   if (provider === "MyAnimeList") {
+//       const response = await browser.runtime.sendMessage({
+//         type: "logout",
+//         provider: provider,
+//       });
+//       if (response.message === "mal_tokens_deleted") {
+//         dispatch(deleteAnimeUserData());
+//       }
+//     }
+//   }
+
+export const onDisconnectProvider = createAsyncThunk(
+  "user/onDisconnectProvider",
+  async (provider, thunkAPI) => {
+    if (provider === "MyAnimeList") {
+      const response = await browser.runtime.sendMessage({
+        type: "logout",
+        provider: provider,
+      });
+      if (response.message === "mal_tokens_deleted") {
+        thunkAPI.dispatch(deleteAnimeUserData());
+      }
+    }
+  }
+);
 
 const initialState = {
   animeUserData: null,

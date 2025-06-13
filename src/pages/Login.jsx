@@ -1,15 +1,10 @@
-import React from "react";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  malOauth,
-  exchangeCodeForRefreshToken,
-} from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import AnimeToggle from "../components/AnimeToggle";
 import MovieToggle from "../components/MovieToggle";
-import { userSlice } from "../features/user/userSlice";
 import { deleteAnimeUserData } from "../features/user/userSlice";
+import { onConnectProvider } from "../features/auth/authSlice";
+import { updateConnectedAnimeProvider } from "../features/ui/uiSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -18,6 +13,10 @@ function Login() {
   const animeUserData = useSelector((state) => state.user.animeUserData);
   const movieUserData = useSelector((state) => state.user.movieUserData);
   const tvShowUserData = useSelector((state) => state.user.tvShowUserData);
+
+  const currentSelectedAnimeProvider = useSelector(
+    (state) => state.ui.currentSelectedAnimeProvider
+  );
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -45,38 +44,58 @@ function Login() {
     // same for movies and tv, if none of
   }
 
+  // function onConnect(provider) {
+  //   console.log("THe button is clicked", provider);
+  //   if (provider === "MyAnimeList") {
+  //     (async () => {
+  //       const response = await browser.runtime.sendMessage({
+  //         type: "send_user_data",
+  //         provider: provider,
+  //       });
+  //       if (response.message === "no_mal_user_data") {
+  //         (async () => {
+  //           const response = await browser.runtime.sendMessage({
+  //             type: "start_auth",
+  //             provider: provider,
+  //           });
+  //           navigate("/");
+  //         })();
+  //       } else {
+  //         navigate("/");
+  //       }
+  //     })();
+  //   }
+  // }
+
+  const onConnect = async (provider) => {
+    const result = await dispatch(onConnectProvider(provider)).unwrap();
+
+    if (
+      result.status === "auth_started" ||
+      result.status === "already_connected"
+    ) {
+      const response = await browser.runtime.sendMessage({
+        type: "connected_provider",
+        action: "update_connected_provider",
+        provider: provider,
+      });
+
+      dispatch(updateConnectedAnimeProvider(provider));
+      navigate("/");
+    }
+  };
+
   function onDisconnect(provider) {
-    if (provider === "mal") {
+    if (provider === "MyAnimeList") {
       (async () => {
+        console.log("Hello, I am inside of disconnect function");
         const response = await browser.runtime.sendMessage({
           type: "logout",
           provider: provider,
         });
+        console.log('response for deleting tokens', response)
         if (response.message === "mal_tokens_deleted") {
           dispatch(deleteAnimeUserData());
-        }
-      })();
-    }
-  }
-
-  function onConnect(provider) {
-    console.log("THe button is clicked", provider);
-    if (provider === "mal") {
-      (async () => {
-        const response = await browser.runtime.sendMessage({
-          type: "send_user_data",
-          provider: provider,
-        });
-        if (response.message === "no_mal_user_data") {
-          (async () => {
-            const response = await browser.runtime.sendMessage({
-              type: "start_auth",
-              provider: provider,
-            });
-            navigate("/");
-          })();
-        } else {
-          navigate("/");
         }
       })();
     }
@@ -127,7 +146,7 @@ function Login() {
                   <div className="content-center">
                     <button
                       onClick={() => {
-                        onConnect("mal");
+                        onConnect(currentSelectedAnimeProvider);
                       }}
                       className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-sm"
                     >

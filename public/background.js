@@ -11,32 +11,44 @@ export const MAL_REDIRECT_URI = browser.identity.getRedirectURL();
 // check for user_data
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "send_user_data") {
-    if (message.provider == "mal") {
+    if (message.provider == "MyAnimeList") {
       getMALUserData(sendResponse);
       return true;
     }
     if (message.provider == "all") {
-      let malResponse = getMALUserData(sendResponse);
-
-      if (malResponse.message == "no_mal_user_data") {
-      }
-
+      (async () => {
+        const data = await getAllConnectedProviders();
+        sendResponse(data);
+      })();
       return true;
     }
   } else if (message.type === "start_auth") {
-    if (message.provider == "mal") {
+    if (message.provider == "MyAnimeList") {
       (async () => {
         const userData = await MALAuth();
         sendResponse(userData);
       })();
     }
   } else if (message.type === "logout") {
-    if (message.provider === "mal") {
-      browser.storage.session.remove("malUserInfo");
-      browser.storage.local.remove("mal_refresh_token");
+    if (message.provider === "MyAnimeList") {
+      (async () => {
+        browser.storage.local.remove("mal_refresh_token");
+        let data = await browser.storage.session.get("connected_providers");
+        data = data.connected_providers;
+        console.log("data is from logout bg", data);
+        if (data.anime.name === message.provider) {
+          data.anime.name = null;
+          data.anime.userData = null;
+          await browser.storage.session.set({ connected_providers: data });
+        }
+        sendResponse({ message: "mal_tokens_deleted" });
+      })();
     }
-
-    sendResponse({ message: "mal_tokens_deleted" });
+  } else if (message.type === "connected_provider") {
+    if (message.action === "update_connected_provider") {
+      updateConnectedProvider(message.provider);
+    }
+    async () => {};
   }
 
   return true;
@@ -131,10 +143,18 @@ export async function fetchUserData() {
   );
 
   const malUserInfo = await response.json();
-  malUserInfo["provider"] = "mal";
+  malUserInfo["provider"] = "MyAnimeList";
 
-  // keep the user info in session storage
-  browser.storage.session.set({ malUserInfo: malUserInfo });
+  let data = {
+    anime: { name: "MyAnimeList", userData: malUserInfo },
+    movie: { name: null, userData: null },
+    tv_show: { name: null, userData: null },
+  };
+
+  console.log("data when logging in for the first time:", data);
+  await browser.storage.session.set({ connected_providers: data });
+  const lol = await browser.storage.session.get("connected_providers");
+  console.log("data gotten from session during first login", lol);
   return malUserInfo;
 }
 
@@ -168,21 +188,67 @@ async function refreshAccessToken() {
 
 // ---------------------------------------------------------------------------------------------------
 async function getMALUserData(sendResponse) {
-  const userData = await browser.storage.session.get("malUserInfo");
-  console.log("here is the user data that i get from bg: ", userData);
-  if (userData.malUserInfo && Object.keys(userData.malUserInfo).length > 2) {
-    sendResponse(userData.malUserInfo);
+  const userData = await browser.storage.session.get("connected_providers");
+  const malData = userData?.connected_providers?.anime;
+
+  console.log("here is the user data that i get from bg: ", malData);
+
+  if (malData && malData.userData != null) {
+    sendResponse(malData.userData);
   } else {
-    if (Object.keys(malRefreshToken).length > 0) {
+    if (
+      Object.keys(malRefreshToken).length > 0 &&
+      malRefreshToken != undefined
+    ) {
       const userData = await refreshAccessToken().then(fetchUserData);
       console.log(
         "This is the userData of when there was resfresh token, but had to get userData:",
         userData
       );
+      updateConnectedProvider("MyAnimeList", userData);
       sendResponse(userData);
     } else {
       // meaning it's the first time user is logging in
       sendResponse({ message: "no_mal_user_data" });
     }
   }
+}
+// ---------------------------------------------------------------------------------Check Connected Providers --------------------------------------------------
+async function getAllConnectedProviders() {
+  let data = await browser.storage.session.get("connected_providers");
+  console.log("session stored data", data);
+  data = data.connected_providers || {
+    anime: { name: null, userData: null },
+    movie: { name: null, userData: null },
+    tv_show: { name: null, userData: null },
+  };
+
+  return {
+    anime: data.anime?.userData ? data.anime : null,
+    movie: data.movie?.userData ? data.movie : null,
+    tv_show: data.tv_show?.userData ? data.tv_show : null,
+  };
+}
+
+async function updateConnectedProvider(provider, userData) {
+  let data = await browser.storage.session.get("connected_providers");
+  data = data.connected_providers || {
+    anime: { name: null, userData: null },
+    movie: { name: null, userData: null },
+    tv_show: { name: null, userData: null },
+  };
+
+  let category = null;
+
+  //check which provider called this function; anime; movie or tv shows
+  if (provider === "MyAnimeList" || provider === "AniList") {
+    category = "anime";
+  } else if (provider === "trakt") {
+    category = "tv_show";
+  }
+
+  data[category].name = provider;
+  data[category].userData = userData;
+
+  await browser.storage.session.set({ connected_providers: data });
 }

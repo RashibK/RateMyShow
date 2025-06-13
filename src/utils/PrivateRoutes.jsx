@@ -2,13 +2,20 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { malRefreshAccessToken } from "../features/auth/authSlice";
-import { addAnimeUserData } from "../features/user/userSlice";
+import {
+  addAnimeUserData,
+  addMovieUserData,
+  addTvShowUserData,
+} from "../features/user/userSlice";
 function PrivateRoutes() {
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(false);
 
   const dispatch = useDispatch();
+
   const animeUserData = useSelector((state) => state.user.animeUserData);
+  const movieUserData = useSelector((state) => state.user.movieUserData);
+  const tvShowUserData = useSelector((state) => state.user.tvShowUserData);
 
   useEffect(() => {
     async function getUserData() {
@@ -21,10 +28,22 @@ function PrivateRoutes() {
 
         console.log("second time around:", response);
 
-        if (response?.name) {
-          console.log("Hello from place where there is response data");
-          setUserData(response);
-          dispatch(addAnimeUserData(response));
+        if (response.anime) {
+          dispatch(addAnimeUserData(response.anime.userData));
+        }
+        if (response.movie) {
+          dispatch(addMovieUserData(response.movie.userData));
+        }
+        if (response.tv_show) {
+          dispatch(addTvShowUserData(response.tv_show.userData));
+        }
+
+        if (
+          response?.anime?.userData ||
+          response?.movie?.userData ||
+          response?.tv_show?.userData
+        ) {
+          setUserData(true);
         }
       } catch (error) {
         console.log(error);
