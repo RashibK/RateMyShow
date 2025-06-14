@@ -3,15 +3,15 @@ export const ANILIST_REDIRECT_URI = browser.identity.getRedirectURL();
 
 export async function AniListAuth() {
   const redirectURL = await startAniListAuth();
-  return validate(redirectURL);
+  console.log(redirectURL);
+  return parseRedirectURL(redirectURL);
 }
 
 export async function startAniListAuth() {
-  const response_type = "code";
+  const response_type = "token";
   let authURL = "https://anilist.co/api/v2/oauth/authorize";
   authURL += `?response_type=${response_type}`;
   authURL += `&client_id=${ANILIST_CLIENT_ID}`;
-  authURL += `&redirect_uri=${ANILIST_REDIRECT_URI}`;
 
   return await browser.identity.launchWebAuthFlow({
     interactive: true,
@@ -19,14 +19,26 @@ export async function startAniListAuth() {
   });
 }
 
-export async function validate(redirectURL) {
-  console.log("I am in validate thing");
-  const params = new URL(redirectURL).searchParams;
-  const code = params.get("code");
+export async function parseRedirectURL(redirectURL) {
+  const fragment = new URL(redirectURL).hash.substring(1);
+  const params = new URLSearchParams(fragment);
+  const anilist_access_token = params.get("access_token");
 
-  return code;
+  await browser.storage.local.set({
+    anilist_access_token: "anilist_access_token",
+  });
+  return anilist_access_token;
 }
 
 export async function getAniListUserData(sendResponse) {
-  sendResponse({ message: "no_anilist_user_data" });
+  const anilist_access_token = await browser.storage.local.get({
+    anilist_access_token: "anilist_access_token",
+  });
+
+  // if (anilist_access_token?.anilist_access_token)
+  // {
+
+  // }
+
+    sendResponse({ message: "no_anilist_user_data" });
 }
