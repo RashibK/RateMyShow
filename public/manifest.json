@@ -6,26 +6,31 @@
   "description": "Lets you login through MyAnimeList (and more others, soon...) to rate your favourite shows",
 
   "icons": {
-      "96": "icons/main-logo.svg"
+    "96": "icons/main-logo.svg"
   },
 
   "background": {
-  "scripts": ["background.js"],
-  "persistent": false,
-  "type": "module"
-},
-
-  "browser_action": {
-     "default_title": "RateMyShow",
-     "default_popup": "index.html"
+    "scripts": ["background/background.js"],
+    "persistent": false,
+    "type": "module"
   },
 
-  "permissions": ["identity", "activeTab", "https://myanimelist.net/v1/oauth2/token", "storage", "https://api.myanimelist.net/v2/"],
+  "browser_action": {
+    "default_title": "RateMyShow",
+    "default_popup": "index.html"
+  },
+
+  "permissions": [
+    "identity",
+    "activeTab",
+    "https://myanimelist.net/v1/oauth2/token",
+    "storage",
+    "https://api.myanimelist.net/v2/"
+  ],
 
   "browser_specific_settings": {
-"gecko": {
-  "id": "ratemyshow@rashibk"
-}
-}
-
+    "gecko": {
+      "id": "ratemyshow@rashibk"
+    }
+  }
 }

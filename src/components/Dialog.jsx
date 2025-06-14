@@ -41,7 +41,7 @@ function Dialog({ category, onClose, setToggle, current, newSelected }) {
                 dispatch(
                   updateSelectedProvider({
                     category: "anime",
-                    provider: "AniList",
+                    provider: newSelected,
                   })
                 );
                 onClose();

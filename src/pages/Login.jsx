@@ -4,7 +4,10 @@ import AnimeToggle from "../components/AnimeToggle";
 import MovieToggle from "../components/MovieToggle";
 import { deleteAnimeUserData } from "../features/user/userSlice";
 import { onConnectProvider } from "../features/auth/authSlice";
-import { updateConnectedProvider } from "../features/ui/uiSlice";
+import {
+  updateConnectedProvider,
+  updateSelectedProvider,
+} from "../features/ui/uiSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -78,7 +81,7 @@ function Login() {
     }
   };
 
-  function onDisconnect(provider) {
+  function onDisconnect(category, provider) {
     if (provider === "MyAnimeList") {
       (async () => {
         console.log("Hello, I am inside of disconnect function");
@@ -89,6 +92,7 @@ function Login() {
         console.log("response for deleting tokens", response);
         if (response.message === "mal_tokens_deleted") {
           dispatch(deleteAnimeUserData());
+          dispatch(updateConnectedProvider({ category, provider: null }));
         }
       })();
     }
@@ -125,7 +129,7 @@ function Login() {
                   <div className="content-center">
                     <button
                       onClick={() => {
-                        onDisconnect(animeUserData.provider);
+                        onDisconnect("anime", animeUserData.provider);
                       }}
                       className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-500 rounded-lg transition shadow-sm"
                     >
