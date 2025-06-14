@@ -1,14 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { onDisconnectProvider } from "../features/user/userSlice";
-import { updateSelectedAnimeProvider } from "../features/ui/uiSlice";
+import {
+  updateConnectedProvider,
+  updateSelectedProvider,
+} from "../features/ui/uiSlice";
 
-
-function Dialog({ onClose, setToggle, current, newSelected }) {
+function Dialog({ category, onClose, setToggle, current, newSelected }) {
   const dispatch = useDispatch();
 
   const currentConnected = useSelector(
-    (state) => state.ui.currentConnectedAnimeProvider
+    (state) => state.ui.connectedProviders[category]
   );
+  console.log(currentConnected);
 
   return (
     <>
@@ -34,7 +37,13 @@ function Dialog({ onClose, setToggle, current, newSelected }) {
             <button
               onClick={() => {
                 dispatch(onDisconnectProvider(current));
-                dispatch(updateSelectedAnimeProvider("AniList"));
+                dispatch(updateConnectedProvider({ category, provider: null }));
+                dispatch(
+                  updateSelectedProvider({
+                    category: "anime",
+                    provider: "AniList",
+                  })
+                );
                 onClose();
               }}
               className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-500 rounded-md transition"

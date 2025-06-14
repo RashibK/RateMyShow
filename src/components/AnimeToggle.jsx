@@ -1,20 +1,21 @@
 import { useState } from "react";
 import Dialog from "./Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSelectedAnimeProvider } from "../features/ui/uiSlice";
+import { updateSelectedProvider } from "../features/ui/uiSlice";
 
-const AnimeToggle = ({ animeProvider }) => {
+const AnimeToggle = () => {
   const [selected, setSelected] = useState("MyAnimeList");
   const dispatch = useDispatch();
 
   const currentSelected = useSelector(
-    (state) => state.ui.currentSelectedAnimeProvider
+    (state) => state.ui.selectedProviders.anime
   );
 
+  console.log("this is the currently selected value", currentSelected);
   const currentConnected = useSelector(
-    (state) => state.ui.currentConnectedAnimeProvider
+    (state) => state.ui.connectedProviders.anime
   );
-
+  console.log("This is the currently connected provider: ", currentConnected);
   const setToggle = (option) => {
     setSelected(option);
   };
@@ -34,12 +35,16 @@ const AnimeToggle = ({ animeProvider }) => {
               : "px-2 hover:bg-button_hover_bg rounded-xl text-white"
           }
           onClick={() => {
-            console.log(animeProvider);
             if (currentSelected != "MyAnimeList") {
-              if (animeProvider) {
+              if (currentConnected) {
                 setIsDialogOpen(true);
               } else {
-                dispatch(updateSelectedAnimeProvider("MyAnimeList"));
+                dispatch(
+                  updateSelectedProvider({
+                    category: "anime",
+                    provider: "MyAnimeList",
+                  })
+                );
               }
             }
           }}
@@ -53,13 +58,16 @@ const AnimeToggle = ({ animeProvider }) => {
               : "px-2 hover:bg-button_hover_bg rounded-xl text-white"
           }
           onClick={() => {
-            console.log(animeProvider);
-
             if (currentSelected != "AniList") {
-              if (animeProvider) {
+              if (currentConnected) {
                 setIsDialogOpen(true);
               } else {
-                dispatch(updateSelectedAnimeProvider("AniList"));
+                dispatch(
+                  updateSelectedProvider({
+                    category: "anime",
+                    provider: "AniList",
+                  })
+                );
               }
             }
           }}
@@ -70,12 +78,15 @@ const AnimeToggle = ({ animeProvider }) => {
 
       {isDialogOpen && (
         <Dialog
+        category = {'anime'}
           onClose={() => {
             setIsDialogOpen(false);
           }}
           setToggle={setToggle}
           current={currentSelected}
-          newSelected={selected == "MyAnimeList" ? "AniList" : "MyAnimeList"}
+          newSelected={
+            currentSelected == "MyAnimeList" ? "AniList" : "MyAnimeList"
+          }
         />
       )}
     </>

@@ -4,7 +4,7 @@ import AnimeToggle from "../components/AnimeToggle";
 import MovieToggle from "../components/MovieToggle";
 import { deleteAnimeUserData } from "../features/user/userSlice";
 import { onConnectProvider } from "../features/auth/authSlice";
-import { updateConnectedAnimeProvider } from "../features/ui/uiSlice";
+import { updateConnectedProvider } from "../features/ui/uiSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -14,35 +14,28 @@ function Login() {
   const movieUserData = useSelector((state) => state.user.movieUserData);
   const tvShowUserData = useSelector((state) => state.user.tvShowUserData);
 
-  const currentSelectedAnimeProvider = useSelector(
-    (state) => state.ui.currentSelectedAnimeProvider
+  const selectedAnimeProvider = useSelector(
+    (state) => state.ui.selectedProviders.anime
   );
+  // async function onSubmit(event) {
+  //   event.preventDefault();
 
-  async function onSubmit(event) {
-    event.preventDefault();
+  //   const category = event.target.contentCategory.value;
+  //   const provider = event.target.providerOptions.value;
 
-    const category = event.target.contentCategory.value;
-    const provider = event.target.providerOptions.value;
-
-    if (category === "anime") {
-      if (provider === "myanimelist") {
-        try {
-          const userData = await browser.runtime.sendMessage({
-            type: "start_mal_auth",
-          });
-          navigate("/");
-        } catch (error) {
-          console.log("Error:", error);
-        }
-      }
-    }
-  }
-
-  function checkConnectedProviders() {
-    // send message to background.js
-    // it goes and looks for mal user data, if there is, it returns it, if not, it uses mal refresh tokens, get the access token and sends the user data, and I show it here
-    // same for movies and tv, if none of
-  }
+  //   if (category === "anime") {
+  //     if (provider === "myanimelist") {
+  //       try {
+  //         const userData = await browser.runtime.sendMessage({
+  //           type: "start_mal_auth",
+  //         });
+  //         navigate("/");
+  //       } catch (error) {
+  //         console.log("Error:", error);
+  //       }
+  //     }
+  //   }
+  // }
 
   // function onConnect(provider) {
   //   console.log("THe button is clicked", provider);
@@ -67,7 +60,7 @@ function Login() {
   //   }
   // }
 
-  const onConnect = async (provider) => {
+  const onConnect = async (category, provider) => {
     const result = await dispatch(onConnectProvider(provider)).unwrap();
 
     if (
@@ -80,7 +73,7 @@ function Login() {
         provider: provider,
       });
 
-      dispatch(updateConnectedAnimeProvider(provider));
+      dispatch(updateConnectedProvider({ category, provider }));
       navigate("/");
     }
   };
@@ -93,7 +86,7 @@ function Login() {
           type: "logout",
           provider: provider,
         });
-        console.log('response for deleting tokens', response)
+        console.log("response for deleting tokens", response);
         if (response.message === "mal_tokens_deleted") {
           dispatch(deleteAnimeUserData());
         }
@@ -110,7 +103,7 @@ function Login() {
               <div className="provider-type text-zinc-100 font-semibold text-base">
                 Anime
               </div>
-              <AnimeToggle animeProvider={animeUserData?.provider} />
+              <AnimeToggle />
             </div>
             <div className="flex justify-between">
               {animeUserData ? (
@@ -146,7 +139,7 @@ function Login() {
                   <div className="content-center">
                     <button
                       onClick={() => {
-                        onConnect(currentSelectedAnimeProvider);
+                        onConnect("anime", selectedAnimeProvider);
                       }}
                       className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-sm"
                     >

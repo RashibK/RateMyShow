@@ -1,22 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  currentSelectedAnimeProvider: "MyAnimeList",
-  currentConnectedAnimeProvider: null,
+  selectedProviders: {
+    anime: "MyAnimeList",
+    movie: "Trakt",
+    tvShow: "Trakt",
+  },
+
+  connectedProviders: {
+    anime: null,
+    movie: null,
+    tvShow: null,
+  },
 };
 
 export const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    updateSelectedAnimeProvider: (state, action) => {
-      state.currentSelectedAnimeProvider = action.payload;
+    updateSelectedProvider: (state, action) => {
+      const { category, provider } = action.payload;
+      state.selectedProviders[category] = provider;
     },
-    updateConnectedAnimeProvider: (state, action) => {
-      state.currentConnectedAnimeProvider = action.payload;
+    updateConnectedProvider: (state, action) => {
+      const { category, provider } = action.payload;
+      state.connectedProviders[category] = provider;
     },
   },
 });
 
-export const { updateSelectedAnimeProvider, updateConnectedAnimeProvider } = uiSlice.actions;
+export const { updateSelectedProvider, updateConnectedProvider } =
+  uiSlice.actions;
 export default uiSlice.reducer;

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MAL_CLIENT_ID, MAL_REDIRECT_URI } from "./authConstants";
 import { createCodeVerifier, createStateToken } from "../../utils/oauthHelpers";
+import { updateConnectedProvider } from "../ui/uiSlice";
 
 // getting redirect url with code + state values
 export const malOauth = createAsyncThunk("auth/malOauth", async () => {
@@ -99,9 +100,10 @@ export const malRefreshAccessToken = createAsyncThunk(
 
 export const onConnectProvider = createAsyncThunk(
   "auth/onConnectProvider",
-  async (provider) => {
+  async (provider, thunkAPI) => {
     console.log("THe provider button is clicked", provider);
     if (provider === "MyAnimeList") {
+      const category = "anime";
       const response = await browser.runtime.sendMessage({
         type: "send_user_data",
         provider: provider,
@@ -111,9 +113,11 @@ export const onConnectProvider = createAsyncThunk(
           type: "start_auth",
           provider: provider,
         });
+
+        thunkAPI.dispatch(updateConnectedProvider({ category, provider }));
         return { status: "auth started", provider };
       } else {
-        return { status: "already_connected", provider };
+        return { status: "already_connected", provider, response };
       }
     }
     return { status: "unsupported_provider", provider };

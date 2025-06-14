@@ -3,17 +3,19 @@ import {
   createStateToken,
 } from "./background/oAuthUtils.js";
 
-const malRefreshToken = await browser.storage.local.get("mal_refresh_token");
+const { malRefreshToken } = await browser.storage.local.get(
+  "mal_refresh_token"
+);
 
 export const MAL_CLIENT_ID = "db72b0c4364bb89f8c4bc7991b734bee";
 export const MAL_REDIRECT_URI = browser.identity.getRedirectURL();
+console.log('Redirect uri: ', browser.identity.getRedirectURL())
 
 // check for user_data
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "send_user_data") {
     if (message.provider == "MyAnimeList") {
       getMALUserData(sendResponse);
-      return true;
     }
     if (message.provider == "all") {
       (async () => {
@@ -46,7 +48,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   } else if (message.type === "connected_provider") {
     if (message.action === "update_connected_provider") {
-      updateConnectedProvider(message.provider);
+      updateConnectedProviderBG((provider = message.provider), userData);
     }
     async () => {};
   }
@@ -148,7 +150,7 @@ export async function fetchUserData() {
   let data = {
     anime: { name: "MyAnimeList", userData: malUserInfo },
     movie: { name: null, userData: null },
-    tv_show: { name: null, userData: null },
+    tvShow: { name: null, userData: null },
   };
 
   console.log("data when logging in for the first time:", data);
@@ -196,16 +198,13 @@ async function getMALUserData(sendResponse) {
   if (malData && malData.userData != null) {
     sendResponse(malData.userData);
   } else {
-    if (
-      Object.keys(malRefreshToken).length > 0 &&
-      malRefreshToken != undefined
-    ) {
+    if (malRefreshToken) {
       const userData = await refreshAccessToken().then(fetchUserData);
       console.log(
         "This is the userData of when there was resfresh token, but had to get userData:",
         userData
       );
-      updateConnectedProvider("MyAnimeList", userData);
+      updateConnectedProviderBG("MyAnimeList", userData);
       sendResponse(userData);
     } else {
       // meaning it's the first time user is logging in
@@ -220,22 +219,22 @@ async function getAllConnectedProviders() {
   data = data.connected_providers || {
     anime: { name: null, userData: null },
     movie: { name: null, userData: null },
-    tv_show: { name: null, userData: null },
+    tvShow: { name: null, userData: null },
   };
 
   return {
     anime: data.anime?.userData ? data.anime : null,
     movie: data.movie?.userData ? data.movie : null,
-    tv_show: data.tv_show?.userData ? data.tv_show : null,
+    tvShow: data.tvShow?.userData ? data.tvShow : null,
   };
 }
 
-async function updateConnectedProvider(provider, userData) {
+export async function updateConnectedProviderBG(provider, userData) {
   let data = await browser.storage.session.get("connected_providers");
   data = data.connected_providers || {
     anime: { name: null, userData: null },
     movie: { name: null, userData: null },
-    tv_show: { name: null, userData: null },
+    tvShow: { name: null, userData: null },
   };
 
   let category = null;
@@ -244,11 +243,15 @@ async function updateConnectedProvider(provider, userData) {
   if (provider === "MyAnimeList" || provider === "AniList") {
     category = "anime";
   } else if (provider === "trakt") {
-    category = "tv_show";
+    category = "tvShow";
   }
 
   data[category].name = provider;
   data[category].userData = userData;
 
   await browser.storage.session.set({ connected_providers: data });
+  console.log(
+    "updated connected provider in bg",
+    await browser.storage.session.get("connected_providers")
+  );
 }

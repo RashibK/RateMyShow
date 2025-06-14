@@ -34,14 +34,14 @@ function PrivateRoutes() {
         if (response.movie) {
           dispatch(addMovieUserData(response.movie.userData));
         }
-        if (response.tv_show) {
-          dispatch(addTvShowUserData(response.tv_show.userData));
+        if (response.tvShow) {
+          dispatch(addTvShowUserData(response.tvShow.userData));
         }
 
         if (
           response?.anime?.userData ||
           response?.movie?.userData ||
-          response?.tv_show?.userData
+          response?.tvShow?.userData
         ) {
           setUserData(true);
         }
