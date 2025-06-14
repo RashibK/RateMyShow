@@ -3,7 +3,6 @@ import { providerMap } from "../utils/providerMap";
 // check for user_data
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const { type, provider } = message;
-
   const specificProvider = providerMap[provider];
 
   if (type === "send_user_data") {
@@ -25,9 +24,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (type === "logout") {
     if (specificProvider) {
       (async () => {
-        browser.storage.local.remove(
-          `${provider.toLowerCase()}_refresh_token`
-        );
+        browser.storage.local.remove(`${provider.toLowerCase()}_refresh_token`);
         let data = await browser.storage.session.get("connected_providers");
         data = data.connected_providers;
         console.log("data is from logout bg", data);
@@ -48,9 +45,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "update_connected_provider") {
       updateConnectedProviderBG(message.provider, message.userData);
     }
-    async () => {};
   }
-
   return true;
 });
 // ---------------------------------------------------------------------------------Check Connected Providers --------------------------------------------------

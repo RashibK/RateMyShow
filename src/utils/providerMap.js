@@ -1,4 +1,4 @@
-import { AniListAuth } from "../background/AniListOAuth";
+import { AniListAuth, getAniListUserData } from "../background/AniListOAuth";
 import { getMALUserData, MALAuth } from "../background/MALOAuth";
 
 export const providerMap = {
@@ -11,6 +11,6 @@ export const providerMap = {
   AniList: {
     category: "anime",
     startAuth: AniListAuth,
-    getUserData: null,
+    getUserData: getAniListUserData,
   },
 };

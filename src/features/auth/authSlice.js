@@ -106,12 +106,14 @@ export const onConnectProvider = createAsyncThunk(
   "auth/onConnectProvider",
   async ({ category, provider }, thunkAPI) => {
     console.log("THe provider button is clicked", provider);
-    if (provider === "MyAnimeList") {
+    if (provider) {
       const response = await browser.runtime.sendMessage({
         type: "send_user_data",
-        provider: provider,
+        provider,
       });
-      if (response.message === "no_mal_user_data") {
+      console.log("response message", response.message);
+      console.log("checking against", `no_${provider.toLowerCase()}_user_data`);
+      if (response.message === `no_${provider.toLowerCase()}_user_data`) {
         const response = await browser.runtime.sendMessage({
           type: "start_auth",
           provider: provider,
@@ -122,7 +124,6 @@ export const onConnectProvider = createAsyncThunk(
       } else {
         return { status: "already_connected", provider, response };
       }
-    } else if (provider === "AniList") {
     }
     return { status: "unsupported_provider", provider };
   }

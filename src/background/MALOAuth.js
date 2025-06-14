@@ -10,7 +10,7 @@ export function MALAuth() {
   return startMALAuth().then(validate);
 }
 
-export function startMALAuth() {
+export async function startMALAuth() {
   const response_type = "code";
   let authURL = "https://myanimelist.net/v1/oauth2/authorize";
   authURL += `?response_type=${response_type}`;
@@ -20,7 +20,7 @@ export function startMALAuth() {
   authURL += `&code_challenge=${createCodeVerifier()}`;
   authURL += `&code_challenge_method=plain`;
 
-  return browser.identity.launchWebAuthFlow({
+  return await browser.identity.launchWebAuthFlow({
     interactive: true,
     url: authURL,
   });
@@ -68,7 +68,9 @@ export async function exchangeCodeForRefreshToken(code) {
   console.log(myanimelist_refresh_token);
   console.log(mal_access_token);
   console.log(mal_expires_in);
-  browser.storage.local.set({ myanimelist_refresh_token: myanimelist_refresh_token });
+  browser.storage.local.set({
+    myanimelist_refresh_token: myanimelist_refresh_token,
+  });
   browser.storage.local.set({ mal_expires_in: mal_expires_in });
   await browser.storage.session.set({ mal_access_token: mal_access_token });
 
@@ -109,7 +111,9 @@ export async function fetchUserData() {
 }
 
 export async function refreshAccessToken() {
-  const malRefreshToken = await browser.storage.local.get("myanimelist_refresh_token");
+  const malRefreshToken = await browser.storage.local.get(
+    "myanimelist_refresh_token"
+  );
 
   //make it form urlencoded type
   let bodyInfo = new URLSearchParams();
@@ -131,7 +135,9 @@ export async function refreshAccessToken() {
   const mal_access_token = response.access_token;
   const mal_expires_in = response.expires_in;
 
-  browser.storage.local.set({ myanimelist_refresh_token: myanimelist_refresh_token });
+  browser.storage.local.set({
+    myanimelist_refresh_token: myanimelist_refresh_token,
+  });
   browser.storage.local.set({ mal_expires_in: mal_expires_in });
   browser.storage.session.set({ mal_access_token: mal_access_token });
 }
@@ -159,7 +165,7 @@ export async function getMALUserData(sendResponse) {
       sendResponse(userData);
     } else {
       // meaning it's the first time user is logging in
-      sendResponse({ message: "no_mal_user_data" });
+      sendResponse({ message: `no_myanimelist_user_data` });
     }
   }
 }

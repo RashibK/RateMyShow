@@ -20,50 +20,8 @@ function Login() {
   const selectedAnimeProvider = useSelector(
     (state) => state.ui.selectedProviders.anime
   );
-  // async function onSubmit(event) {
-  //   event.preventDefault();
 
-  //   const category = event.target.contentCategory.value;
-  //   const provider = event.target.providerOptions.value;
-
-  //   if (category === "anime") {
-  //     if (provider === "myanimelist") {
-  //       try {
-  //         const userData = await browser.runtime.sendMessage({
-  //           type: "start_mal_auth",
-  //         });
-  //         navigate("/");
-  //       } catch (error) {
-  //         console.log("Error:", error);
-  //       }
-  //     }
-  //   }
-  // }
-
-  // function onConnect(provider) {
-  //   console.log("THe button is clicked", provider);
-  //   if (provider === "MyAnimeList") {
-  //     (async () => {
-  //       const response = await browser.runtime.sendMessage({
-  //         type: "send_user_data",
-  //         provider: provider,
-  //       });
-  //       if (response.message === "no_mal_user_data") {
-  //         (async () => {
-  //           const response = await browser.runtime.sendMessage({
-  //             type: "start_auth",
-  //             provider: provider,
-  //           });
-  //           navigate("/");
-  //         })();
-  //       } else {
-  //         navigate("/");
-  //       }
-  //     })();
-  //   }
-  // }
-
-  const onConnect = async (category, provider) => {
+  const   onConnect = async (category, provider) => {
     console.log("loggin in from login component, ", provider);
     const result = await dispatch(
       onConnectProvider({ category, provider })

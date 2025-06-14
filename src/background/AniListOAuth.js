@@ -2,16 +2,20 @@ export const ANILIST_CLIENT_ID = "27628";
 export const ANILIST_REDIRECT_URI = browser.identity.getRedirectURL();
 
 export async function AniListAuth() {
-  const authURL = "https://anilist.co/api/v2/oauth/authorize";
+  console.log("I am in start of AniList Auth");
+  const response_type = "code";
+  let authURL = "https://anilist.co/api/v2/oauth/authorize";
+  authURL += `?response_type=${response_type}`;
+  authURL += `&client_id=${ANILIST_CLIENT_ID}`;
+  authURL += `&redirect_uri=${ANILIST_REDIRECT_URI}`;
 
-  const data = new URLSearchParams();
-  data.append("client_id", ANILIST_CLIENT_ID);
-  data.append("redirect_uri", ANILIST_REDIRECT_URI);
-
-  let response = await fetch(authURL, {
-    method: "GET",
-    body: data,
+  const response = await browser.identity.launchWebAuthFlow({
+    interactive: true,
+    url: authURL,
   });
-  response = await response.json();
-  print('Response from AniList Auth', response)
+  console.log(response)
+}
+
+export async function getAniListUserData(sendResponse) {
+  sendResponse({ message: "no_anilist_user_data" });
 }
