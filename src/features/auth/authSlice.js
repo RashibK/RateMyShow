@@ -51,15 +51,17 @@ export const exchangeCodeForRefreshToken = createAsyncThunk(
     });
 
     response = await response.json();
-    const mal_refresh_token = response.refresh_token;
+    const myanimelist_refresh_token = response.refresh_token;
     const mal_access_token = response.access_token;
     const mal_expires_in = response.expires_in;
 
     //store them
-    console.log(mal_refresh_token);
+    console.log(myanimelist_refresh_token);
     console.log(mal_access_token);
     console.log(mal_expires_in);
-    browser.storage.local.set({ mal_refresh_token: mal_refresh_token });
+    browser.storage.local.set({
+      myanimelist_refresh_token: myanimelist_refresh_token,
+    });
     browser.storage.local.set({ mal_expires_in: mal_expires_in });
     browser.storage.session.set({ mal_access_token: mal_access_token });
   }
@@ -70,13 +72,13 @@ export const malRefreshAccessToken = createAsyncThunk(
   "auth/malRefreshAccessToken",
   async () => {
     const malRefreshToken = await browser.storage.local.get(
-      "mal_refresh_token"
+      "myanimelist_refresh_token"
     );
     //make it form urlencoded type
     let bodyInfo = new URLSearchParams();
     bodyInfo.append("client_id", MAL_CLIENT_ID);
     bodyInfo.append("grant_type", "refresh_token");
-    bodyInfo.append("refresh_token", malRefreshToken.mal_refresh_token);
+    bodyInfo.append("refresh_token", malRefreshToken.myanimelist_refresh_token);
 
     let response = await fetch("https://myanimelist.net/v1/oauth2/token", {
       method: "POST",
@@ -88,11 +90,13 @@ export const malRefreshAccessToken = createAsyncThunk(
     response = await response.json();
 
     // updating the refreshToken and accessToken value
-    const mal_refresh_token = response.refresh_token;
+    const myanimelist_refresh_token = response.refresh_token;
     const mal_access_token = response.access_token;
     const mal_expires_in = response.expires_in;
 
-    browser.storage.local.set({ mal_refresh_token: mal_refresh_token });
+    browser.storage.local.set({
+      myanimelist_refresh_token: myanimelist_refresh_token,
+    });
     browser.storage.local.set({ mal_expires_in: mal_expires_in });
     browser.storage.session.set({ mal_access_token: mal_access_token });
   }
@@ -100,10 +104,9 @@ export const malRefreshAccessToken = createAsyncThunk(
 
 export const onConnectProvider = createAsyncThunk(
   "auth/onConnectProvider",
-  async (provider, thunkAPI) => {
+  async ({ category, provider }, thunkAPI) => {
     console.log("THe provider button is clicked", provider);
     if (provider === "MyAnimeList") {
-      const category = "anime";
       const response = await browser.runtime.sendMessage({
         type: "send_user_data",
         provider: provider,
@@ -119,6 +122,7 @@ export const onConnectProvider = createAsyncThunk(
       } else {
         return { status: "already_connected", provider, response };
       }
+    } else if (provider === "AniList") {
     }
     return { status: "unsupported_provider", provider };
   }

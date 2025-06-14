@@ -64,7 +64,10 @@ function Login() {
   // }
 
   const onConnect = async (category, provider) => {
-    const result = await dispatch(onConnectProvider(provider)).unwrap();
+    console.log("loggin in from login component, ", provider);
+    const result = await dispatch(
+      onConnectProvider({ category, provider })
+    ).unwrap();
 
     if (
       result.status === "auth_started" ||
@@ -73,7 +76,8 @@ function Login() {
       const response = await browser.runtime.sendMessage({
         type: "connected_provider",
         action: "update_connected_provider",
-        provider: provider,
+        provider: result.provider,
+        userData: result.response,
       });
 
       dispatch(updateConnectedProvider({ category, provider }));
@@ -90,7 +94,7 @@ function Login() {
           provider: provider,
         });
         console.log("response for deleting tokens", response);
-        if (response.message === "mal_tokens_deleted") {
+        if (response.message === "myanimelist_tokens_deleted") {
           dispatch(deleteAnimeUserData());
           dispatch(updateConnectedProvider({ category, provider: null }));
         }

@@ -43,7 +43,7 @@ export const onDisconnectProvider = createAsyncThunk(
         type: "logout",
         provider: provider,
       });
-      if (response.message === "mal_tokens_deleted") {
+      if (response.message === "myanimelist_tokens_deleted") {
         thunkAPI.dispatch(deleteAnimeUserData());
       }
     }
