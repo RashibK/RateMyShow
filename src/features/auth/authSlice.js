@@ -111,16 +111,20 @@ export const onConnectProvider = createAsyncThunk(
         type: "send_user_data",
         provider,
       });
-      console.log("response message", response.message);
+      console.log("response message", response);
       console.log("checking against", `no_${provider.toLowerCase()}_user_data`);
+     
       if (response.message === `no_${provider.toLowerCase()}_user_data`) {
         const response = await browser.runtime.sendMessage({
           type: "start_auth",
           provider: provider,
         });
-
+        
+        console.log('The response I got when starting auth', response)
+        
         thunkAPI.dispatch(updateConnectedProvider({ category, provider }));
-        return { status: "auth started", provider };
+        
+        return { status: "auth_started", provider, response };
       } else {
         return { status: "already_connected", provider, response };
       }

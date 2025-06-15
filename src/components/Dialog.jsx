@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { onDisconnectProvider } from "../features/user/userSlice";
+import { deleteAnimeUserData, onDisconnectProvider } from "../features/user/userSlice";
 import {
   updateConnectedProvider,
   updateSelectedProvider,
@@ -36,7 +36,8 @@ function Dialog({ category, onClose, setToggle, current, newSelected }) {
             </button>
             <button
               onClick={() => {
-                dispatch(onDisconnectProvider(current));
+                dispatch(deleteAnimeUserData())
+                dispatch(onDisconnectProvider(currentConnected));
                 dispatch(updateConnectedProvider({ category, provider: null }));
                 dispatch(
                   updateSelectedProvider({

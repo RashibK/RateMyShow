@@ -22,9 +22,6 @@ const AnimeToggle = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // check if another provider is already logged in, if so, don't allow for switching, show a popup instead
-  function isOtherProviderLoggedIn() {}
-
   return (
     <>
       <div className="inline-flex justify-between items-center outer-box bg-[#1e1e22] rounded-xl p-1 space-x-2">
@@ -78,7 +75,7 @@ const AnimeToggle = () => {
 
       {isDialogOpen && (
         <Dialog
-        category = {'anime'}
+          category={"anime"}
           onClose={() => {
             setIsDialogOpen(false);
           }}

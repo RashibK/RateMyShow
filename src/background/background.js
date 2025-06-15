@@ -5,6 +5,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const { type, provider } = message;
   const specificProvider = providerMap[provider];
 
+  console.log("category and provider in bg", type, provider, specificProvider);
+
   if (type === "send_user_data") {
     if (specificProvider?.getUserData) {
       specificProvider.getUserData(sendResponse);
@@ -13,37 +15,35 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const data = await getAllConnectedProviders();
         sendResponse(data);
       })();
+      return true;
     }
   } else if (type === "start_auth") {
     if (specificProvider?.startAuth) {
       (async () => {
-        const userData = await specificProvider.startAuth();
+        const userData = await specificProvider.startAuth(sendResponse);
         sendResponse(userData);
       })();
+      return true;
     }
   } else if (type === "logout") {
-    if (specificProvider) {
+    if (specificProvider?.logOutUser) {
       (async () => {
-        browser.storage.local.remove(`${provider.toLowerCase()}_refresh_token`);
-        let data = await browser.storage.session.get("connected_providers");
-        data = data.connected_providers;
-        console.log("data is from logout bg", data);
-
-        const category = specificProvider.category;
-
-        if (data[category]?.name === provider) {
-          data[category].name = null;
-          data[category].userData = null;
-          await browser.storage.session.set({ connected_providers: data });
-        }
-        sendResponse({
-          message: `${provider.toLowerCase()}_tokens_deleted`,
-        });
+        const response = await specificProvider.logOutUser();
+        sendResponse({ message: response });
       })();
+      return true;
     }
   } else if (type === "connected_provider") {
     if (message.action === "update_connected_provider") {
-      updateConnectedProviderBG(message.provider, message.userData);
+      (async () => {
+        // const userData = await getUserDataFromAnyProviderResponse(
+        //   message.provider,
+        //   message.userData
+        // );
+        updateConnectedProviderBG(message.provider, message.userData);
+        sendResponse(message.userData); // For updating the data in login in addAnimeUserData section for redux
+      })();
+      return true;
     }
   }
   return true;
@@ -90,4 +90,40 @@ export async function updateConnectedProviderBG(provider, userData) {
     "updated connected provider in bg",
     await browser.storage.session.get("connected_providers")
   );
+}
+
+export async function getUserDataFromAnyProviderResponse(provider, response) {
+  if (provider === "AniList") {
+    const username = response.data.Viewer.name;
+    const image = response.data.Viewer.avatar.medium;
+    return { username, image };
+  }
+  if (provider === "MyAnimeList") {
+    const username = response.name;
+    const image = response.picture;
+    return { username, image };
+  }
+}
+
+export async function logOut(token_key, category, provider) {
+  console.log(
+    "we are inside of logout function",
+    token_key,
+    category,
+    provider
+  );
+  await browser.storage.local.remove(token_key);
+
+  let data = await browser.storage.session.get("connected_providers");
+  data = data.connected_providers;
+
+  if (data[category]?.name === provider) {
+    data[category].name = null;
+    data[category].userData = null;
+    await browser.storage.session.set({ connected_providers: data });
+
+    return `${provider.toLowerCase()}_tokens_deleted`;
+  }
+
+  return { message: "provider_not_found" };
 }

@@ -3,14 +3,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 export const onDisconnectProvider = createAsyncThunk(
   "user/onDisconnectProvider",
   async (provider, thunkAPI) => {
-    if (provider === "MyAnimeList") {
-      const response = await browser.runtime.sendMessage({
-        type: "logout",
-        provider: provider,
-      });
-      if (response.message === "myanimelist_tokens_deleted") {
-        thunkAPI.dispatch(deleteAnimeUserData());
-      }
+    const response = await browser.runtime.sendMessage({
+      type: "logout",
+      provider: provider,
+    });
+    if (response.message === `${provider.toLowerCase()}_tokens_deleted`) {
+      thunkAPI.dispatch(deleteAnimeUserData());
     }
   }
 );

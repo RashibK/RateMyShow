@@ -2,7 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AnimeToggle from "../components/AnimeToggle";
 import MovieToggle from "../components/MovieToggle";
-import { deleteAnimeUserData } from "../features/user/userSlice";
+import {
+  addAnimeUserData,
+  deleteAnimeUserData,
+} from "../features/user/userSlice";
 import { onConnectProvider } from "../features/auth/authSlice";
 import {
   updateConnectedProvider,
@@ -21,7 +24,11 @@ function Login() {
     (state) => state.ui.selectedProviders.anime
   );
 
-  const   onConnect = async (category, provider) => {
+  const connectedAnimeProvider = useSelector(
+    (state) => state.ui.connectedProviders.anime
+  );
+
+  const onConnect = async (category, provider) => {
     console.log("loggin in from login component, ", provider);
     const result = await dispatch(
       onConnectProvider({ category, provider })
@@ -31,33 +38,39 @@ function Login() {
       result.status === "auth_started" ||
       result.status === "already_connected"
     ) {
+      if (result.status === "auth_started") {
+        console.log("when auth is new", result.response);
+      } else if (result.status === "already_connected") {
+        console.log("when auth  not new", result.response);
+      }
+
       const response = await browser.runtime.sendMessage({
         type: "connected_provider",
         action: "update_connected_provider",
         provider: result.provider,
         userData: result.response,
       });
-
+      console.log("response for logging ing", response);
+      dispatch(addAnimeUserData(response));
       dispatch(updateConnectedProvider({ category, provider }));
       navigate("/");
     }
   };
 
   function onDisconnect(category, provider) {
-    if (provider === "MyAnimeList") {
-      (async () => {
-        console.log("Hello, I am inside of disconnect function");
-        const response = await browser.runtime.sendMessage({
-          type: "logout",
-          provider: provider,
-        });
-        console.log("response for deleting tokens", response);
-        if (response.message === "myanimelist_tokens_deleted") {
-          dispatch(deleteAnimeUserData());
-          dispatch(updateConnectedProvider({ category, provider: null }));
-        }
-      })();
-    }
+    (async () => {
+      console.log("Hello, I am inside of disconnect function");
+      const response = await browser.runtime.sendMessage({
+        type: "logout",
+        provider: provider,
+      });
+
+      if (response.message === `${provider.toLowerCase()}_tokens_deleted`) {
+        console.log("deleting more stuffs");
+        dispatch(deleteAnimeUserData());
+        dispatch(updateConnectedProvider({ category, provider: null }));
+      }
+    })();
   }
 
   return (
@@ -77,21 +90,21 @@ function Login() {
                   <div className="flex items-center justify-between gap-x-3">
                     <div className="bg-white w-10 h-10 overflow-hidden border border-border rounded-full">
                       <img
-                        src={animeUserData.picture}
+                        src={animeUserData.image}
                         className="w-full h-full rounded-full cursor-pointer"
                       />
                     </div>
                     <span className="text-zinc-100 text-base">
                       Connected as{" "}
                       <span className="font-medium text-base cursor-pointer">
-                        {animeUserData.name}
+                        {animeUserData.username}
                       </span>
                     </span>
                   </div>
                   <div className="content-center">
                     <button
                       onClick={() => {
-                        onDisconnect("anime", animeUserData.provider);
+                        onDisconnect("anime", connectedAnimeProvider);
                       }}
                       className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-500 rounded-lg transition shadow-sm"
                     >

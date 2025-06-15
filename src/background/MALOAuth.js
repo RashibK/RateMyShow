@@ -2,6 +2,7 @@ import {
   createCodeVerifier,
   createStateToken,
 } from "../../public/background/oAuthUtils.js";
+import { getUserDataFromAnyProviderResponse } from "./background.js";
 
 export const MAL_CLIENT_ID = "db72b0c4364bb89f8c4bc7991b734bee";
 export const MAL_REDIRECT_URI = browser.identity.getRedirectURL();
@@ -96,10 +97,14 @@ export async function fetchUserData() {
   );
 
   const malUserInfo = await response.json();
-  malUserInfo["provider"] = "MyAnimeList";
+
+  const userData = await getUserDataFromAnyProviderResponse(
+    "MyAnimeList",
+    malUserInfo
+  );
 
   let data = {
-    anime: { name: "MyAnimeList", userData: malUserInfo },
+    anime: { name: "MyAnimeList", userData: userData },
     movie: { name: null, userData: null },
     tvShow: { name: null, userData: null },
   };
@@ -108,7 +113,7 @@ export async function fetchUserData() {
   await browser.storage.session.set({ connected_providers: data });
   const lol = await browser.storage.session.get("connected_providers");
   console.log("data gotten from session during first login", lol);
-  return malUserInfo;
+  return userData;
 }
 
 export async function refreshAccessToken() {
