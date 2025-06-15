@@ -11,10 +11,12 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         background: resolve(__dirname, 'src/background/background.js'),
+        crTracker: resolve(__dirname, 'src/content_scripts/crunchyroll/crTracker.js'), 
       },
       output: {
         entryFileNames: assetInfo => {
           if (assetInfo.name === 'background') return 'background/[name].js';
+          if (assetInfo.name === 'crTracker') return 'content_scripts/crunchyroll/[name].js'; 
           return 'assets/[name].js';
         },
       },

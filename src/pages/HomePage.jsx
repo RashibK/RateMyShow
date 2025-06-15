@@ -4,6 +4,7 @@ import { addAnimeUserData } from "../features/user/userSlice";
 import { Link } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import Login from "./Login";
+import Rate from "./Rate";
 
 function HomePage() {
 
@@ -20,8 +21,8 @@ function HomePage() {
 
   return (
     <>
-        <div className="text-white">Hello {animeUserData?.name}</div>
-    <Link to='/login' element={<Login />}>Login</Link>
+        <div className="text-white">Hello {animeUserData?.username}</div>
+    {animeUserData?.username && <Rate />}
     </>
 
   )

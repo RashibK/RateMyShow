@@ -11,8 +11,7 @@
 
   "background": {
     "scripts": ["background/background.js"],
-    "persistent": false,
-    "type": "module"
+    "persistent": false
   },
 
   "browser_action": {
@@ -32,5 +31,12 @@
     "gecko": {
       "id": "ratemyshow@rashibk"
     }
-  }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://www.crunchyroll.com/*"],
+      "js": ["content_scripts/crunchyroll/crTracker.js"]
+    }
+  ]
 }
