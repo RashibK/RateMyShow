@@ -3,6 +3,7 @@ import { watchRouteChanges } from "../watchRouteChange";
 
 watchRouteChanges((newUrl) => {
   console.log("new url:", newUrl);
+  extractAnimeInfoFromCR();
 });
 
 // when page is loaded
@@ -19,7 +20,53 @@ async function startCRTracker() {
   const info = await extractAnimeInfoFromCR();
 }
 
-async function extractAnimeInfoFromCR() {}
+async function extractAnimeInfoFromCR() {
+  const animeTitleEl = await waitForElementtoLoad("a.show-title-link > h4");
+  const epNumberNameEl = await waitForElementtoLoad(
+    "div.erc-current-media-info > h1"
+  );
+
+  const isMovie = isItAMovieCR(epNumberNameEl);
+  console.log(" is it a movie: ", isMovie);
+  if (isMovie) {
+    //removes " (English Dub)" if present from movie Title name
+    const re = /\s*\(\s*English\s+Dub\s*\)/i;
+
+    let movieName = epNumberNameEl.textContent.trim();
+    movieName = movieName.replace(re, "").trim();
+
+    console.log("Here is movie name:", movieName);
+  } else if (isMovie === false) {
+    const animeTitle = animeTitleEl.textContent.trim();
+
+    const epNameWhole = epNumberNameEl.textContent.trim();
+
+    // captures string where first group is EpNumber, and second one is Episode Name
+    const re = /^E(\d+)\s+[-—]\s+(.+)/;
+    const result = epNameWhole.match(re);
+
+    const epNumber = result?.[1];
+    const epName = result?.[2];
+  }
+}
+
+function isItAMovieCR(epNumberNameEl) {
+  console.log("hello");
+  const epNumberName = epNumberNameEl.textContent.trim();
+  const re = /^E\d+(\.)?\d+\s*[-—]\s+/;
+
+  const result = epNumberName.match(re);
+
+  if (!result) {
+    return true;
+  } else {
+    if (result?.[1] === ".") {
+      return "skip";
+    } else {
+      return false;
+    }
+  }
+}
 
 async function waitForElementtoLoad(selector, timeout = 5000) {
   return new Promise((resolve, reject) => {
