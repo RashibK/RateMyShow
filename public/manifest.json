@@ -24,7 +24,9 @@
     "activeTab",
     "https://myanimelist.net/v1/oauth2/token",
     "storage",
-    "https://api.myanimelist.net/v2/"
+    "https://api.myanimelist.net/v2/",
+    "https://static.crunchyroll.com/*",
+    "https://crunchyroll.com/*"
   ],
 
   "browser_specific_settings": {
@@ -37,6 +39,12 @@
     {
       "matches": ["*://www.crunchyroll.com/*"],
       "js": ["content_scripts/crunchyroll/crTracker.js"]
+    },
+    {
+      "matches": ["*://static.crunchyroll.com/*"],
+      "js": ["content_scripts/crunchyroll/injectIntoCR.js"],
+      "all_frames": true,
+      "run_at": "document_idle"
     }
   ]
 }
