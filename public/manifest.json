@@ -12,6 +12,7 @@
   "background": {
     "scripts": ["background/background.js"],
     "persistent": false
+
   },
 
   "browser_action": {
@@ -39,6 +40,7 @@
     {
       "matches": ["*://www.crunchyroll.com/*"],
       "js": ["content_scripts/crunchyroll/crTracker.js"]
+
     },
     {
       "matches": ["*://static.crunchyroll.com/*"],

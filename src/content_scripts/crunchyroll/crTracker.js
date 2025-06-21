@@ -1,22 +1,25 @@
-import { watchRouteChanges } from "../watchRouteChange";
+import { getAnimeTitleinCR } from "../../utils/animeUtils.js";
+import { escapeRegExp } from "../../utils/regexUtils.js";
+import { watchRouteChanges } from "../watchRouteChange.js";
 
-watchRouteChanges((newUrl) => {
-  console.log("new url:", newUrl);
-  extractAnimeInfoFromCR();
-});
+// watchRouteChanges((newUrl) => {
+//   console.log("new url:", newUrl);
+//   extractAnimeInfoFromCR();
+// });
 
-// when page is loaded
-if (url.pathname.includes("/watch/")) {
-  console.log("user is on the watch page!!");
-}
+// // when page is loaded
+// if (url.pathname.includes("/watch/")) {
+//   console.log("user is on the watch page!!");
+//   extractAnimeInfoFromCR();
+// }
 
-async function startCRTracker() {
-  const url = new URL(window.location.href);
-  if (!url.pathname.includes("/watch/")) return;
+// async function startCRTracker() {
+//   const url = new URL(window.location.href);
+//   if (!url.pathname.includes("/watch/")) return;
 
-  console.log("User is on watch page");
-  const info = await extractAnimeInfoFromCR();
-}
+//   console.log("User is on watch page");
+//   const info = await extractAnimeInfoFromCR();
+// }
 
 async function extractAnimeInfoFromCR() {
   const animeTitleEl = await waitForElementtoLoad("a.show-title-link > h4");
@@ -34,24 +37,52 @@ async function extractAnimeInfoFromCR() {
     movieName = movieName.replace(re, "").trim();
 
     console.log("Here is movie name:", movieName);
+    return {
+      provider: "CR",
+      category: "anime",
+      media_type: "movie",
+      title: movieName,
+      episode_number: null,
+      episode_title: null,
+      progress: 85.0,
+    };
   } else if (isMovie === false) {
-    const animeTitle = animeTitleEl.textContent.trim();
+    try {
+      let animeTitleWhole = document.title;
 
-    const epNameWhole = epNumberNameEl.textContent.trim();
+      const epNameWhole = epNumberNameEl.textContent.trim();
 
-    // captures string where first group is EpNumber, and second one is Episode Name
-    const re = /^E(\d+)\s+[-—]\s+(.+)/;
-    const result = epNameWhole.match(re);
+      // captures string where first group is EpNumber, and second one is Episode Name
+      const re = /^E(\d+)\s+[-—]\s+(.+)/;
+      const result = epNameWhole.match(re);
 
-    const epNumber = result?.[1];
-    const epName = result?.[2];
+      const epNumber = result?.[1];
+      let epName = result?.[2].trim();
+
+      epName = escapeRegExp(epName);
+      console.log('Anime NAme and ep name" ', animeTitleWhole, epName);
+      const animeTitle = getAnimeTitleinCR(animeTitleWhole, epName);
+
+      console.log("anime title", animeTitle);
+      return {
+        provider: "CR",
+        category: "anime",
+        media_type: null,
+        title: animeTitle,
+        episode_number: epNumber,
+        episode_title: epName,
+        progress: 85.0,
+      };
+    } catch (err) {
+      console.log("Error in crTracker: ", err);
+    }
   }
 }
 
 function isItAMovieCR(epNumberNameEl) {
   console.log("hello");
   const epNumberName = epNumberNameEl.textContent.trim();
-  const re = /^E\d+(\.)?\d+\s*[-—]\s+/;
+  const re = /^E\d+(\.)?\d*\s*[-—]\s+/;
 
   const result = epNumberName.match(re);
 
@@ -84,3 +115,19 @@ async function waitForElementtoLoad(selector, timeout = 5000) {
     }, 100);
   });
 }
+
+// message listener
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "get_metadata" && message.site === "CR") {
+    (async () => {
+      try {
+        console.log("I am inside of content script");
+        const info = await extractAnimeInfoFromCR();
+        sendResponse(info);
+      } catch (err) {
+        sendResponse({ message: "error", error: err });
+      }
+    })();
+    return true;
+  }
+});

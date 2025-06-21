@@ -3,12 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+"scripts": {
+  "build": "npm run build:popup && npm run build:background && npm run build:crtracker && npm run build:inject",
+  "build:popup": "vite build --config vite.config.popup.js",
+  "build:background": "vite build --config vite.config.background.js",
+  "build:crtracker": "vite build --config vite.config.crtracker.js",
+  "build:inject": "vite build --config vite.config.inject.js"
+
+},
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",
     "axios": "^1.9.0",

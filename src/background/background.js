@@ -45,6 +45,35 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       })();
       return true;
     }
+  } else if (message.type === "sync_media") {
+    (async () => {
+     try { const tabs = await browser.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      const tabId = tabs[0].id;
+
+      const metaData = await browser.tabs.sendMessage(tabId, {
+        type: "get_metadata",
+        site: message.site,
+      });
+      console.log(metaData);
+      //find connected providers
+      const providers = await getAllConnectedProviders();
+      console.log('all providers: ', providers)
+      const providerCategory = metaData?.category; // anime | movie | tvShow
+      console.log('provider category', providerCategory)
+      const connectedProvider = providers[providerCategory];
+      console.log('connected Provider', connectedProvider)
+      const specificProviderMap = providerMap[connectedProvider.name];
+
+
+      console.log('specific provider map', specificProviderMap)
+      specificProviderMap?.syncMedia(metaData);}
+      catch (err) {
+        console.log('Error in Background: ', err)
+      }
+    })();
   }
   return true;
 });
@@ -52,7 +81,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function getAllConnectedProviders() {
   let data = await browser.storage.session.get("connected_providers");
   console.log("session stored data", data);
-  data = data.connected_providers || {
+  data = data?.connected_providers || {
     anime: { name: null, userData: null },
     movie: { name: null, userData: null },
     tvShow: { name: null, userData: null },
