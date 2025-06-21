@@ -1,13 +1,9 @@
-import { time } from "motion";
 import { watchRouteChanges } from "../watchRouteChange";
-import { BrowserRouter } from "react-router-dom";
 
 watchRouteChanges((newUrl) => {
   console.log("new url:", newUrl);
   extractAnimeInfoFromCR();
 });
-
-
 
 // when page is loaded
 if (url.pathname.includes("/watch/")) {
