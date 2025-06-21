@@ -35,7 +35,7 @@ export async function getProviderIdsFromTitle(metaData) {
   });
   response = await response.json();
   console.log("Here is the response I got from anilist: ", response);
-  console.log("I am here to do fetching", metaData);
+  return response;
 }
 
 export function getAnimeTitleinCR(CRPageTitle, EpisodeTitle) {

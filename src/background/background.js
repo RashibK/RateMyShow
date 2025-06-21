@@ -47,31 +47,40 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   } else if (message.type === "sync_media") {
     (async () => {
-     try { const tabs = await browser.tabs.query({
-        active: true,
-        currentWindow: true,
-      });
-      const tabId = tabs[0].id;
+      try {
+        const tabs = await browser.tabs.query({
+          active: true,
+          currentWindow: true,
+        });
+        const tabId = tabs[0].id;
 
-      const metaData = await browser.tabs.sendMessage(tabId, {
-        type: "get_metadata",
-        site: message.site,
-      });
-      console.log(metaData);
-      //find connected providers
-      const providers = await getAllConnectedProviders();
-      console.log('all providers: ', providers)
-      const providerCategory = metaData?.category; // anime | movie | tvShow
-      console.log('provider category', providerCategory)
-      const connectedProvider = providers[providerCategory];
-      console.log('connected Provider', connectedProvider)
-      const specificProviderMap = providerMap[connectedProvider.name];
+        const metaData = await browser.tabs.sendMessage(tabId, {
+          type: "get_metadata",
+          site: message.site,
+        });
+        console.log(metaData);
+        //find connected providers
+        const providers = await getAllConnectedProviders();
+        console.log("all providers: ", providers);
+        const providerCategory = metaData?.category; // anime | movie | tvShow
+        console.log("provider category", providerCategory);
+        const connectedProvider = providers[providerCategory];
+        console.log("connected Provider", connectedProvider);
 
+        // check if any provider for that category is connected or not:
+        if (connectedProvider?.name) {
+          const specificProviderMap = providerMap[connectedProvider.name];
 
-      console.log('specific provider map', specificProviderMap)
-      specificProviderMap?.syncMedia(metaData);}
-      catch (err) {
-        console.log('Error in Background: ', err)
+          console.log("specific provider map", specificProviderMap);
+          specificProviderMap?.syncMedia(metaData);
+        } else {
+          await browser.tabs.sendMessage(tabId, {
+            type: "send_alert",
+            message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page to start auto syncing`,
+          });
+        }
+      } catch (err) {
+        console.log("Error in Background: ", err);
       }
     })();
   }

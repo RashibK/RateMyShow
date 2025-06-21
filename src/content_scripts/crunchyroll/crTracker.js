@@ -1,3 +1,4 @@
+import { number } from "motion";
 import { getAnimeTitleinCR } from "../../utils/animeUtils.js";
 import { escapeRegExp } from "../../utils/regexUtils.js";
 import { watchRouteChanges } from "../watchRouteChange.js";
@@ -69,7 +70,7 @@ async function extractAnimeInfoFromCR() {
         category: "anime",
         media_type: null,
         title: animeTitle,
-        episode_number: epNumber,
+        episode_number: Number(epNumber),
         episode_title: epName,
         progress: 85.0,
       };
@@ -129,5 +130,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     })();
     return true;
+  } else if (message.type === 'send_alert') {
+    alert(message.message)
   }
 });

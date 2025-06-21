@@ -1,7 +1,8 @@
 console.log('I am running from the site"s script');
 let interval = null;
 
-browser.runtime.sendMessage({type: 'sync_media', category: 'anime', site: 'CR'})
+// browser.runtime.sendMessage({type: 'sync_media', category: 'anime', site: 'CR'})
+
 // on page load:
 console.log("Script injected into static.crunchyroll.com");
 startProgressChecker();
@@ -15,7 +16,7 @@ async function startProgressChecker() {
     () => {
       getCurrentDuration();
     },
-    60000 // check every minute
+    30000 // check every minute
   );
 }
 
@@ -64,5 +65,9 @@ function watchRouteChanges(onChange) {
 }
 
 async function syncTheShowCR() {
-  await browser.runtime.sendMessage({type: 'sync_media', category: 'anime', site: 'CR'})
+  await browser.runtime.sendMessage({
+    type: "sync_media",
+    category: "anime",
+    site: "CR",
+  });
 }
