@@ -18,6 +18,7 @@ export async function MALSync(metaData) {
     const isRewatching = false; // currently no option to log as rewatched
 
     const numOfWatchEpisodes = metaData?.episode_number;
+
     await syncTheMediaMAL(
       malId,
       status,
@@ -50,15 +51,22 @@ async function syncTheMediaMAL(
     };
 
     const data = {
-      status: `${status}`,
       is_rewatching: Number(isRewatching),
-      num_watched_episodes: numOfWatchEpisodes,
     };
 
     if (score !== null) {
       data["score"] = score;
     } else {
       data["score"] = 0;
+    }
+
+    if (numOfWatchEpisodes) {
+      data["num_watched_episodes"] = numOfWatchEpisodes;
+      data["status"] = status;
+    } else {
+      data["num_watched_episodes"] = 1;
+
+      data["status"] = "completed";
     }
 
     let response = await fetch(url, {

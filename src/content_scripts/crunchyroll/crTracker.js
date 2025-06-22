@@ -23,10 +23,18 @@ import { watchRouteChanges } from "../watchRouteChange.js";
 // }
 
 async function extractAnimeInfoFromCR() {
-  const animeTitleEl = await waitForElementtoLoad("a.show-title-link > h4");
-  const epNumberNameEl = await waitForElementtoLoad(
-    "div.erc-current-media-info > h1"
-  );
+  let animeTitleEl;
+  let epNumberNameEl;
+
+  try {
+    animeTitleEl = await waitForElementtoLoad("a.show-title-link > h4");
+    epNumberNameEl = await waitForElementtoLoad(
+      "div.erc-current-media-info > h1"
+    );
+  } catch (err) {
+    console.log("Error in crTracker extractAnimeInfoFromCR function: ", err);
+    epNumberNameEl = await waitForElementtoLoad("div.show-heading-line > h1");
+  }
 
   const isMovie = isItAMovieCR(epNumberNameEl);
   console.log(" is it a movie: ", isMovie);
@@ -38,11 +46,13 @@ async function extractAnimeInfoFromCR() {
     movieName = movieName.replace(re, "").trim();
 
     console.log("Here is movie name:", movieName);
+
     return {
       provider: "CR",
       category: "anime",
       media_type: "movie",
       title: movieName,
+      fallback_title: animeTitleEl.textContent.trim() || null,
       episode_number: null,
       episode_title: null,
       progress: 85.0,
@@ -70,6 +80,7 @@ async function extractAnimeInfoFromCR() {
         category: "anime",
         media_type: null,
         title: animeTitle,
+        fallback_title: animeTitleEl.textContent.trim() || null,
         episode_number: Number(epNumber),
         episode_title: epName,
         progress: 85.0,
@@ -130,7 +141,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     })();
     return true;
-  } else if (message.type === 'send_alert') {
-    alert(message.message)
+  } else if (message.type === "send_alert") {
+    alert(message.message);
   }
 });

@@ -21,7 +21,7 @@ export async function getProviderIdsFromTitle(metaData) {
       }
     }`;
 
-  const variables = {
+  let variables = {
     search: `${metaData.title}`,
     type: "ANIME",
   };
@@ -35,7 +35,26 @@ export async function getProviderIdsFromTitle(metaData) {
   });
   response = await response.json();
   console.log("Here is the response I got from anilist: ", response);
-  return response;
+  if (!response?.data?.Media) {
+    // anime not found; use the fallback title
+
+    variables = {
+      search: `${metaData.fallback_title}`,
+      type: "ANIME",
+    };
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+    response = await response.json();
+    console.log("Response after using the fallback title: ", response);
+    return response;
+  } else {
+    return response;
+  }
 }
 
 export function getAnimeTitleinCR(CRPageTitle, EpisodeTitle) {
