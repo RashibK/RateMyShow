@@ -46,13 +46,13 @@ async function extractAnimeInfoFromCR() {
     movieName = movieName.replace(re, "").trim();
 
     console.log("Here is movie name:", movieName);
-
+    console.log("what I returning");
     return {
       provider: "CR",
       category: "anime",
       media_type: "movie",
       title: movieName,
-      fallback_title: animeTitleEl.textContent.trim() || null,
+      fallback_title: animeTitleEl?.textContent?.trim() || null,
       episode_number: null,
       episode_title: null,
       progress: 85.0,

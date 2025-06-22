@@ -43,6 +43,10 @@ async function syncTheMediaMAL(
     let result = await browser.storage.session.get("mal_access_token");
     const MAL_ACCESS_TOKEN = result.mal_access_token;
 
+    if (!MAL_ACCESS_TOKEN) {
+      browser.runtime.sendMessage;
+    }
+
     const url = `https://api.myanimelist.net/v2/anime/${malId}/my_list_status`;
 
     const headers = {
@@ -77,6 +81,18 @@ async function syncTheMediaMAL(
     });
     response = await response.json();
     console.log("Response from MAL After Syncing: ", response);
+
+    // sending to content scripts in CR site
+    const tabs = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    const tabId = tabs[0].id;
+
+    const metaData = await browser.tabs.sendMessage(tabId, {
+      type: "stop_syncing",
+      site: "CR",
+    });
   } catch (err) {
     console.log("Error in function - syncTheMediaMAL: ", response);
   }

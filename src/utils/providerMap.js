@@ -1,6 +1,7 @@
 import { AniListAuth, getAniListUserData } from "../background/AniListOAuth";
 import { logOut } from "../background/background";
 import { getMALUserData, MALAuth } from "../background/MALOAuth";
+import { AniListSync } from "../background/sync/AniListSync";
 import { MALSync } from "../background/sync/MALSync";
 
 export const providerMap = {
@@ -11,7 +12,7 @@ export const providerMap = {
     logOutUser: () => {
       return logOut("myanimelist_refresh_token", "anime", "MyAnimeList");
     },
-    syncMedia: (metaData) =>  MALSync(metaData),
+    syncMedia: (metaData) => MALSync(metaData),
   },
 
   AniList: {
@@ -21,5 +22,6 @@ export const providerMap = {
     logOutUser: () => {
       return logOut("anilist_access_token", "anime", "AniList");
     },
+    syncMedia: (metaData) => AniListSync(metaData),
   },
 };

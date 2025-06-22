@@ -58,7 +58,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           type: "get_metadata",
           site: message.site,
         });
-        console.log(metaData);
+        console.log("metadata that I got in bg: ", metaData);
         //find connected providers
         const providers = await getAllConnectedProviders();
         console.log("all providers: ", providers);

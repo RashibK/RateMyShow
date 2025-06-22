@@ -21,7 +21,7 @@ async function startProgressChecker() {
 }
 
 // when something in dom changes:
-function onChange() {
+function onChange(newURL) {
   console.log("URL Changed: ", newURL);
   startProgressChecker();
 }
@@ -42,26 +42,30 @@ async function getCurrentDuration() {
 }
 
 function watchRouteChanges(onChange) {
-  const videoEl = document.querySelector("#player0");
-  let currentPlayerURL = videoEl.currentSrc;
-
-  const checkForChange = () => {
+  try {
     const videoEl = document.querySelector("#player0");
-    let newPlayerURL = videoEl.currentSrc;
-    if (newPlayerURL !== currentPlayerURL) {
-      currentPlayerURL = newPlayerURL;
-      onChange(newPlayerURL);
-    }
-  };
+    let currentPlayerURL = videoEl.currentSrc;
 
-  const observer = new MutationObserver(() => {
-    checkForChange();
-  });
+    const checkForChange = () => {
+      const videoEl = document.querySelector("#player0");
+      let newPlayerURL = videoEl.currentSrc;
+      if (newPlayerURL !== currentPlayerURL) {
+        currentPlayerURL = newPlayerURL;
+        onChange(newPlayerURL);
+      }
+    };
 
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
+    const observer = new MutationObserver(() => {
+      checkForChange();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  } catch (err) {
+    console.log("Error in watchRouteChanges: ", err);
+  }
 }
 
 async function syncTheShowCR() {
@@ -71,3 +75,10 @@ async function syncTheShowCR() {
     site: "CR",
   });
 }
+
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "stop_syncing" && message.site === "CR") {
+    console.log("Hey I am inside of injectintoCR");
+    clearInterval(interval);
+  }
+});
