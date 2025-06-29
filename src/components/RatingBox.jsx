@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Slide, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function RatingBox({
   mediaType,
@@ -8,16 +10,10 @@ function RatingBox({
   metaData,
   mediaInfo,
 }) {
-  console.log(
-    "Data I receive in ratingbox: ",
-    metaData,
-    mediaInfo?.episode_number
-  );
   const [rating, setRating] = useState("");
   const [episode, setEpisode] = useState(
     String(mediaInfo?.episode_number || null)
   );
-
   const [isEditingEpisode, setIsEditingEpisode] = useState(false);
 
   const ratingOptions = [
@@ -44,7 +40,7 @@ function RatingBox({
     const match = rating.match(/(^\d+)[.].+/);
     let ratingNum;
     if (match) {
-      console.log('I am inside of mathc')
+      console.log("I am inside of mathc");
       ratingNum = match[1];
     }
 
@@ -65,11 +61,28 @@ function RatingBox({
       mediaInfo
     );
 
-    await browser.runtime.sendMessage({
+    const response = await browser.runtime.sendMessage({
       type: "rate_media",
       action: "rate",
-      data: { ratingNum, episode: Number(episode), status, metaData, dataFromSite: mediaInfo },
+      data: {
+        ratingNum,
+        episode: Number(episode),
+        status,
+        metaData,
+        dataFromSite: mediaInfo,
+      },
     });
+
+    if (response?.status) {
+      toast.success("Rating Successful!");
+    } else {
+      toast.error("Rating Failed");
+    }
+
+    console.log(
+      "The response I got in RatingBox after successful rating: ",
+      response
+    );
   }
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center">
@@ -171,11 +184,9 @@ function RatingBox({
                   </button>
                   <button
                     disabled={!rating}
-                    onClick={() => {
-                      onRate(rating, episode);
+                    onClick={async () => {
+                      await onRate(rating, episode);
                       onClose();
-                      console.log("Rating:", rating);
-                      console.log("Episode:", episode);
                     }}
                     className="px-4 py-1 text-sm text-white bg-red-600 hover:bg-red-500 rounded-md disabled:opacity-50"
                   >

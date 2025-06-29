@@ -69,7 +69,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // check if any provider for that category is connected or not:
         if (connectedProvider?.name) {
           const specificProviderMap = providerMap[connectedProvider.name];
-          specificProviderMap?.rateMedia(message.data);
+          await specificProviderMap?.rateMedia(message.data, sendResponse);
         }
       })();
       return true;

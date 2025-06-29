@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import RatingBox from "../components/RatingBox";
+import { Slide, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Rate() {
   const [mediaType, setMediaType] = useState(null);
   const [metaData, setMetaData] = useState(null);
   const [mediaInfoFromWebPage, setmediaInfoFromWebPage] = useState(null);
   const [loading, setLoading] = useState(true);
+
+
   function handleRating(mediaType) {
     setMediaType(mediaType);
   }
@@ -30,39 +34,14 @@ function Rate() {
           "response in rate frontend",
           response.dataFromProvider.data.Media
         );
-        /*
-        {
-  {
-  "data": {
-    "Media": {
-      "idMal": 57334,
-      "id": 171018,
-      "bannerImage": "https://s4.anilist.co/file/anilistcdn/media/anime/banner/171018-SpwPNAduszXl.jpg",
-      "title": {
-        "native": "ダンダダン",
-        "english": "DAN DA DAN",
-        "romaji": "Dandadan"
-      },
-      "startDate": {
-        "day": 4,
-        "month": 10,
-        "year": 2024
-      },
-      "episodes": 12,
-      "coverImage": {
-        "medium": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx171018-60q1B6GK2Ghb.jpg"
-      },
-      "season": "FALL",
-      "seasonYear": 2024
-    }
-  }
-}*/
+
         setMetaData(response.dataFromProvider);
         setmediaInfoFromWebPage(response.metaData);
         setLoading(false);
       })();
     }
   }, [mediaType]);
+
 
   return (
     <>
@@ -83,8 +62,25 @@ function Rate() {
           setLoading={setLoading}
           metaData={metaData}
           mediaInfo={mediaInfoFromWebPage}
+
         />
       )}
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+        transition={Slide}
+        toastClassName="!max-w-[240px] !text-sm !px-3 !py-2"
+        bodyClassName="!m-0 !p-0"
+      />
     </>
   );
 }

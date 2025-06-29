@@ -1,4 +1,4 @@
-export async function RateMAL(rateData) {
+export async function RateMAL(rateData, sendResponse) {
   let result = await browser.storage.session.get("mal_access_token");
   const MAL_ACCESS_TOKEN = result.mal_access_token;
 
@@ -24,5 +24,5 @@ export async function RateMAL(rateData) {
     body: new URLSearchParams(data).toString(),
   });
   response = await response.json();
-  console.log("Response from MAL After Rating: ", response);
+  sendResponse(response);
 }

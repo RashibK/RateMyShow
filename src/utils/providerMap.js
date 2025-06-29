@@ -18,7 +18,7 @@ export const providerMap = {
     },
     syncMedia: (metaData, mediaDetailsFromTitle) =>
       MALSync(metaData, mediaDetailsFromTitle),
-    rateMedia:(data) =>  RateMAL(data),
+    rateMedia:(data, sendResponse) =>  RateMAL(data, sendResponse),
   },
 
   AniList: {
