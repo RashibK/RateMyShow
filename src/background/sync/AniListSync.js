@@ -1,10 +1,11 @@
 import { getProviderIdsFromTitle } from "../../utils/animeUtils";
 
-export async function AniListSync(metaData) {
+export async function AniListSync(metaData, mediaDetailsFromTitle) {
   console.log("I am inside of AniList Sync");
 
   try {
-    const result = await getProviderIdsFromTitle(metaData);
+    const result = mediaDetailsFromTitle;
+
     const malId = result?.data?.Media?.idMal;
     const anilistId = result?.data?.Media?.id;
 

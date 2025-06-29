@@ -2,7 +2,7 @@ export async function getProviderIdsFromTitle(metaData) {
   const url = "https://graphql.anilist.co";
 
   const query = `
-         query Query($search: String, $type: MediaType) {
+    query Query($search: String, $type: MediaType) {
       Media(search: $search, type: $type) {
         idMal
         id
@@ -18,8 +18,16 @@ export async function getProviderIdsFromTitle(metaData) {
           year
         }
         episodes
+        coverImage {
+          large
+        }
+        season
+        seasonYear
+        nextAiringEpisode {
+          episode
+        }
       }
-    }`;
+}`;
 
   let variables = {
     search: `${metaData.title}`,

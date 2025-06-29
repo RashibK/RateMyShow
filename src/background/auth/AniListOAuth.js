@@ -1,4 +1,4 @@
-import { getUserDataFromAnyProviderResponse } from "./background";
+import { getUserDataFromAnyProviderResponse } from "../background";
 
 export const ANILIST_CLIENT_ID = "27628";
 export const ANILIST_REDIRECT_URI = browser.identity.getRedirectURL();

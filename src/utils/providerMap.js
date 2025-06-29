@@ -1,8 +1,12 @@
-import { AniListAuth, getAniListUserData } from "../background/AniListOAuth";
+import {
+  AniListAuth,
+  getAniListUserData,
+} from "../background/auth/AniListOAuth";
 import { logOut } from "../background/background";
-import { getMALUserData, MALAuth } from "../background/MALOAuth";
+import { getMALUserData, MALAuth } from "../background/auth/MALOAuth";
 import { AniListSync } from "../background/sync/AniListSync";
 import { MALSync } from "../background/sync/MALSync";
+import { MediaDataMAL } from "../background/rate/MALRate";
 
 export const providerMap = {
   MyAnimeList: {
@@ -12,7 +16,9 @@ export const providerMap = {
     logOutUser: () => {
       return logOut("myanimelist_refresh_token", "anime", "MyAnimeList");
     },
-    syncMedia: (metaData) => MALSync(metaData),
+    syncMedia: (metaData, mediaDetailsFromTitle) =>
+      MALSync(metaData, mediaDetailsFromTitle),
+    rateMedia: MediaDataMAL,
   },
 
   AniList: {
@@ -22,6 +28,7 @@ export const providerMap = {
     logOutUser: () => {
       return logOut("anilist_access_token", "anime", "AniList");
     },
-    syncMedia: (metaData) => AniListSync(metaData),
+    syncMedia: (metaData, mediaDetailsFromTitle) =>
+      AniListSync(metaData, mediaDetailsFromTitle),
   },
 };

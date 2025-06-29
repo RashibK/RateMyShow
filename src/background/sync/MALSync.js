@@ -1,9 +1,10 @@
 import { data } from "autoprefixer";
 import { getProviderIdsFromTitle } from "../../utils/animeUtils";
 
-export async function MALSync(metaData) {
+export async function MALSync(metaData, mediaDetailsFromTitle) {
   try {
-    const result = await getProviderIdsFromTitle(metaData);
+    const result = mediaDetailsFromTitle;
+    console.log("mediadetails in mal sync: ", result);
     const malId = result?.data?.Media?.idMal;
     const anilistId = result?.data?.Media?.id;
 

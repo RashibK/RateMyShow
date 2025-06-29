@@ -1,3 +1,4 @@
+import { getProviderIdsFromTitle } from "../utils/animeUtils";
 import { providerMap } from "../utils/providerMap";
 
 // check for user_data
@@ -12,6 +13,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       specificProvider.getUserData(sendResponse);
     } else if (provider == "all") {
       (async () => {
+        console.log("I am inside of getting data");
         const data = await getAllConnectedProviders();
         sendResponse(data);
       })();
@@ -46,44 +48,64 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true;
     }
   } else if (message.type === "sync_media") {
+    // (async () => {
+    //   try {
+    //     const tabs = await browser.tabs.query({
+    //       active: true,
+    //       currentWindow: true,
+    //     });
+    //     const tabId = tabs[0].id;
+
+    //     const metaData = await browser.tabs.sendMessage(tabId, {
+    //       type: "get_metadata",
+    //       site: message.site,
+    //     });
+    //     console.log("metadata that I got in bg: ", metaData);
+    //     //find connected providers
+    //     const providers = await getAllConnectedProviders();
+    //     console.log("all providers: ", providers);
+    //     const providerCategory = metaData?.category; // anime | movie | tvShow
+    //     console.log("provider category", providerCategory);
+    //     const connectedProvider = providers[providerCategory];
+    //     console.log("connected Provider", connectedProvider);
+
+    //     // check if any provider for that category is connected or not:
+    //     if (connectedProvider?.name) {
+    //       const specificProviderMap = providerMap[connectedProvider.name];
+
+    //       console.log("specific provider map", specificProviderMap);
+    //       const mediaIdDetails = await getProviderIdsFromTitle(metaData);
+    //       console.log('mediaIdDetails: ', mediaIdDetails)
+    //       specificProviderMap?.syncMedia(metaData, mediaIdDetails);
+    //     } else {
+    //       await browser.tabs.sendMessage(tabId, {
+    //         type: "send_alert",
+    //         message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page to start auto syncing`,
+    //       });
+    //     }
+    //   } catch (err) {
+    //     console.log("Error in Background: ", err);
+    //   }
+    //   return true;
+    // })();
     (async () => {
-      try {
-        const tabs = await browser.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
-        const tabId = tabs[0].id;
-
-        const metaData = await browser.tabs.sendMessage(tabId, {
-          type: "get_metadata",
-          site: message.site,
-        });
-        console.log("metadata that I got in bg: ", metaData);
-        //find connected providers
-        const providers = await getAllConnectedProviders();
-        console.log("all providers: ", providers);
-        const providerCategory = metaData?.category; // anime | movie | tvShow
-        console.log("provider category", providerCategory);
-        const connectedProvider = providers[providerCategory];
-        console.log("connected Provider", connectedProvider);
-
-        // check if any provider for that category is connected or not:
-        if (connectedProvider?.name) {
-          const specificProviderMap = providerMap[connectedProvider.name];
-
-          console.log("specific provider map", specificProviderMap);
-          specificProviderMap?.syncMedia(metaData);
-        } else {
-          await browser.tabs.sendMessage(tabId, {
-            type: "send_alert",
-            message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page to start auto syncing`,
-          });
-        }
-      } catch (err) {
-        console.log("Error in Background: ", err);
-      }
+      await handleMediaAction(message, "syncMedia");
     })();
+    return true;
+  } else if (message.type === "rate_media") {
+    if (message.action === "send_media_detail") {
+      (async () => {
+        console.log("I am in bg inside of rate_media");
+        // await handleMediaAction(message, "syncMedia");
+        // step 1: send the specific anime data to frontend
+        const mediaDetailsWithId = await getCurrentMediaId(message);
+        sendResponse(mediaDetailsWithId);
+      })();
+    }
+
+    return true;
   }
+
   return true;
 });
 // ---------------------------------------------------------------------------------Check Connected Providers --------------------------------------------------
@@ -164,4 +186,74 @@ export async function logOut(token_key, category, provider) {
   }
 
   return { message: "provider_not_found" };
+}
+
+export async function handleMediaAction(message, mediaAction) {
+  try {
+    console.log("I am insideo");
+    const tabs = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    const tabId = tabs[0].id;
+
+    const metaData = await browser.tabs.sendMessage(tabId, {
+      type: "get_metadata",
+      site: message.site,
+    });
+    console.log("metadata that I got in bg: ", metaData);
+    //find connected providers
+    const providers = await getAllConnectedProviders();
+    console.log("all providers: ", providers);
+    const providerCategory = metaData?.category; // anime | movie | tvShow
+    console.log("provider category", providerCategory);
+    const connectedProvider = providers[providerCategory];
+    console.log("connected Provider", connectedProvider);
+
+    // check if any provider for that category is connected or not:
+    if (connectedProvider?.name) {
+      const specificProviderMap = providerMap[connectedProvider.name];
+
+      console.log("specific provider map", specificProviderMap);
+      const mediaIdDetails = await getProviderIdsFromTitle(metaData);
+      specificProviderMap?.[mediaAction](metaData, mediaIdDetails);
+    } else {
+      await browser.tabs.sendMessage(tabId, {
+        type: "send_alert",
+        message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page.`,
+      });
+    }
+  } catch (err) {
+    console.log("Error in Background: ", err);
+  }
+}
+
+export async function getCurrentMediaId(message) {
+  const tabs = await browser.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+  const tabId = tabs[0].id;
+
+  const metaData = await browser.tabs.sendMessage(tabId, {
+    type: "get_metadata",
+    site: message.site,
+  });
+  console.log("metadata that I got in bg: ", metaData);
+  //find connected providers
+  const providers = await getAllConnectedProviders();
+  console.log("all providers: ", providers);
+  const providerCategory = metaData?.category; // anime | movie | tvShow
+  console.log("provider category", providerCategory);
+  const connectedProvider = providers[providerCategory];
+  console.log("connected Provider", connectedProvider);
+
+  // check if any provider for that category is connected or not:
+  if (connectedProvider?.name) {
+    const specificProviderMap = providerMap[connectedProvider.name];
+
+    console.log("specific provider map", specificProviderMap);
+    const dataFromProvider = await getProviderIdsFromTitle(metaData);
+    return { metaData, dataFromProvider };
+  }
 }
