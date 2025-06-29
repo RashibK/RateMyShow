@@ -7,6 +7,7 @@ import { getMALUserData, MALAuth } from "../background/auth/MALOAuth";
 import { AniListSync } from "../background/sync/AniListSync";
 import { MALSync } from "../background/sync/MALSync";
 import { RateMAL } from "../background/rate/MALRate";
+import { RateAniList } from "../background/rate/AniListRate";
 
 export const providerMap = {
   MyAnimeList: {
@@ -18,7 +19,7 @@ export const providerMap = {
     },
     syncMedia: (metaData, mediaDetailsFromTitle) =>
       MALSync(metaData, mediaDetailsFromTitle),
-    rateMedia:(data, sendResponse) =>  RateMAL(data, sendResponse),
+    rateMedia: (data, sendResponse) => RateMAL(data, sendResponse),
   },
 
   AniList: {
@@ -30,5 +31,6 @@ export const providerMap = {
     },
     syncMedia: (metaData, mediaDetailsFromTitle) =>
       AniListSync(metaData, mediaDetailsFromTitle),
+    rateMedia: (data, sendResponse) => RateAniList(data, sendResponse),
   },
 };

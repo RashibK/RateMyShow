@@ -73,7 +73,7 @@ function RatingBox({
       },
     });
 
-    if (response?.status) {
+    if (response?.status || response?.data?.SaveMediaListEntry) {
       toast.success("Rating Successful!");
     } else {
       toast.error("Rating Failed");
