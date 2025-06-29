@@ -39,6 +39,38 @@ function RatingBox({
     setEpisode(String(mediaInfo?.episode_number || 1));
   }, [loading]);
 
+  async function onRate(rating, episode) {
+    console.log("I am iside of ratingBox");
+    const match = rating.match(/(^\d+)[.].+/);
+    let ratingNum;
+    if (match) {
+      console.log('I am inside of mathc')
+      ratingNum = match[1];
+    }
+
+    // if it's the last episode of the series/season; then -completed else - watching
+    let status = null;
+    if (media.episodes === mediaInfo?.episode_number) {
+      status = "completed";
+    } else {
+      status = "watching";
+    }
+
+    console.log(
+      "Data sending to bg: ",
+      ratingNum,
+      Number(episode),
+      status,
+      metaData,
+      mediaInfo
+    );
+
+    await browser.runtime.sendMessage({
+      type: "rate_media",
+      action: "rate",
+      data: { ratingNum, episode: Number(episode), status, metaData, dataFromSite: mediaInfo },
+    });
+  }
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center">
       <div className="w-[440px] bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-4 shadow-md">
@@ -140,6 +172,7 @@ function RatingBox({
                   <button
                     disabled={!rating}
                     onClick={() => {
+                      onRate(rating, episode);
                       onClose();
                       console.log("Rating:", rating);
                       console.log("Episode:", episode);

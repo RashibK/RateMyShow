@@ -6,7 +6,7 @@ import { logOut } from "../background/background";
 import { getMALUserData, MALAuth } from "../background/auth/MALOAuth";
 import { AniListSync } from "../background/sync/AniListSync";
 import { MALSync } from "../background/sync/MALSync";
-import { MediaDataMAL } from "../background/rate/MALRate";
+import { RateMAL } from "../background/rate/MALRate";
 
 export const providerMap = {
   MyAnimeList: {
@@ -18,7 +18,7 @@ export const providerMap = {
     },
     syncMedia: (metaData, mediaDetailsFromTitle) =>
       MALSync(metaData, mediaDetailsFromTitle),
-    rateMedia: MediaDataMAL,
+    rateMedia:(data) =>  RateMAL(data),
   },
 
   AniList: {

@@ -44,10 +44,6 @@ async function syncTheMediaMAL(
     let result = await browser.storage.session.get("mal_access_token");
     const MAL_ACCESS_TOKEN = result.mal_access_token;
 
-    if (!MAL_ACCESS_TOKEN) {
-      browser.runtime.sendMessage;
-    }
-
     const url = `https://api.myanimelist.net/v2/anime/${malId}/my_list_status`;
 
     const headers = {
