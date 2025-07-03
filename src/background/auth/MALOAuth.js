@@ -6,6 +6,7 @@ import { getUserDataFromAnyProviderResponse } from "../background.js";
 
 export const MAL_CLIENT_ID = "db72b0c4364bb89f8c4bc7991b734bee";
 export const MAL_REDIRECT_URI = browser.identity.getRedirectURL();
+console.log('Here is my MAL_REDIRECT_URI: ', MAL_REDIRECT_URI)
 
 export async function MALAuth() {
   console.log("I am inside of MAL auth");

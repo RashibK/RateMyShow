@@ -75,9 +75,9 @@ function Login() {
 
   return (
     <>
-      <div className="h-[calc(600px-48px)] flex justify-center items-center w-full">
+      <div className="h-[calc(600px-52px)] bg-background flex justify-center items-center w-full">
         <div className="grid grid-rows-3 gap-4 h-[90%] w-[90%]">
-          <section className="anime-card border border-border bg-zinc-900 flex flex-col rounded-xl p-4 gap-4 shadow-sm">
+          <section className="anime-card border border-border bg-[#111418] flex flex-col rounded-xl p-4 gap-4 shadow-sm">
             <div className="flex justify-between items-center border-b border-border pb-2">
               <div className="provider-type text-zinc-100 font-semibold text-base">
                 Anime
@@ -129,7 +129,7 @@ function Login() {
               )}
             </div>
           </section>
-          <section className="movie-card border border-border bg-zinc-900 flex flex-col rounded-xl p-4 gap-4 shadow-sm">
+          <section className="movie-card border border-border bg-[#111418] flex flex-col rounded-xl p-4 gap-4 shadow-sm">
             <div className="flex justify-between items-center border-b border-border pb-2">
               <div className="provider-type text-zinc-100 font-semibold text-base">
                 Movie
@@ -172,7 +172,7 @@ function Login() {
               )}
             </div>
           </section>
-          <section className="tv-shows-card border border-border bg-zinc-900 flex flex-col rounded-xl p-4 gap-4 shadow-sm ">
+          <section className="tv-shows-card border border-border bg-[#111418] flex flex-col rounded-xl p-4 gap-4 shadow-sm ">
             <div className="flex justify-between items-center border-b border-border pb-2">
               <div className="provider-type text-zinc-100 font-semibold text-base">
                 TV Show
