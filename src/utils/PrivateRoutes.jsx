@@ -8,6 +8,10 @@ import {
   addTvShowUserData,
 } from "../features/user/userSlice";
 import LoadingAnimation from "./LoadingAnimation";
+import {
+  updateConnectedProvider,
+  updateSelectedProvider,
+} from "../features/ui/uiSlice";
 function PrivateRoutes() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(false);
@@ -31,12 +35,48 @@ function PrivateRoutes() {
 
         if (response.anime) {
           dispatch(addAnimeUserData(response.anime.userData));
+          dispatch(
+            updateSelectedProvider({
+              category: "anime",
+              provider: response.anime.name,
+            })
+          );
+          dispatch(
+            updateConnectedProvider({
+              category: "anime",
+              provider: response.anime.name,
+            })
+          );
         }
         if (response.movie) {
           dispatch(addMovieUserData(response.movie.userData));
+          dispatch(
+            updateSelectedProvider({
+              category: "movie",
+              provider: response.movie.name,
+            })
+          );
+          dispatch(
+            updateConnectedProvider({
+              category: "movie",
+              provider: response.movie.name,
+            })
+          );
         }
         if (response.tvShow) {
           dispatch(addTvShowUserData(response.tvShow.userData));
+          dispatch(
+            updateSelectedProvider({
+              category: "tvShow",
+              provider: response.tvShow.name,
+            })
+          );
+          dispatch(
+            updateConnectedProvider({
+              category: "tvShow",
+              provider: response.tvShow.name,
+            })
+          );
         }
 
         if (
@@ -55,7 +95,12 @@ function PrivateRoutes() {
     getUserData();
   }, []);
 
-  if (loading) return <LoadingAnimation />
+  if (loading)
+    return (
+      <div className="h-[calc(600px-52px)]">
+        <LoadingAnimation />
+      </div>
+    );
 
   return userData ? <Outlet /> : <Navigate to="/login" />;
 }

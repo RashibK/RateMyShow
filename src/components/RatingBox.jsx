@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingAnimation from "../utils/LoadingAnimation";
+import { Link } from "lucide-react";
 
 function RatingBox({
   mediaType,
@@ -33,6 +35,27 @@ function RatingBox({
 
   useEffect(() => {
     setEpisode(String(mediaInfo?.episode_number || 1));
+  }, [loading]);
+
+  useEffect(() => {
+    if (loading) {
+      const timeout = setTimeout(() => {
+        onClose();
+        toast.error(
+          <div>
+            Action not available on this page.{" "}
+            <a
+              href="https://example.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-blue-400"
+            >
+              Learn more
+            </a>
+          </div>
+        );
+      });
+    }
   }, [loading]);
 
   async function onRate(rating, episode) {
@@ -88,7 +111,7 @@ function RatingBox({
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center">
       <div className="w-[440px] bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-4 shadow-md">
         {loading ? (
-          <div className="text-white text-center">Loading...</div>
+          <LoadingAnimation />
         ) : (
           <>
             <h2 className="text-base font-semibold text-white mb-2">

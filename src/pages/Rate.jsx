@@ -66,21 +66,24 @@ function Rate({ animeUserData }) {
 
             {/* Rating Cards */}
             <div className="flex flex-col gap-4">
-              <button className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition">
+              <button
+                onClick={() => handleRating("Anime")}
+                className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition"
+              >
                 <Heart className="text-[#4CC9F0]" />
                 <div className="text-left">
-                  <p
-                    className="font-medium text-base"
-                    onClick={() => handleRating("Anime")}
-                  >
-                    Rate Anime
-                  </p>
+                  <p className="font-medium text-base">Rate Anime</p>
                   <p className="text-xs text-gray-400">
                     Track your favorite anime shows
                   </p>
                 </div>
               </button>
-              <button className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition">
+              <button
+                onClick={() => {
+                  toast.info("Coming Soon!");
+                }}
+                className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition"
+              >
                 <Film className="text-[#4CC9F0]" />
                 <div className="text-left">
                   <p className="font-medium text-base">Rate Movie</p>
@@ -89,7 +92,12 @@ function Rate({ animeUserData }) {
                   </p>
                 </div>
               </button>
-              <button className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition">
+              <button
+                onClick={() => {
+                  toast.info("Coming Soon!");
+                }}
+                className="flex items-center gap-4 p-4 rounded-xl bg-[#1f2937] hover:bg-[#374151] transition"
+              >
                 <Tv2 className="text-[#4CC9F0]" />
                 <div className="text-left">
                   <p className="font-medium text-base">Rate Show</p>
@@ -102,7 +110,7 @@ function Rate({ animeUserData }) {
 
             {/* Optional footer */}
             <div className="mt-4 text-center text-xs text-gray-500">
-              Choose what you want to rate and well take you there.
+              Choose what you want to rate and it do it for you.
             </div>
           </div>
         </div>
@@ -124,15 +132,15 @@ function Rate({ animeUserData }) {
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop
-        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover={false}
         theme="dark"
         transition={Slide}
-        toastClassName="!max-w-[240px] !text-sm !px-3 !py-2"
+        toastClassName="!w-fit !max-w-[420px] !text-sm !px-3 !py-2 !pr-8"
         bodyClassName="!m-0 !p-0"
+        limit={3}
       />
     </>
   );
