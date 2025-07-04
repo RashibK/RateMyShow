@@ -1,18 +1,21 @@
 {
   "manifest_version": 2,
   "name": "RateMyShow",
-  "version": "1.0.1",
+  "version": "1.0.3",
 
   "description": "Lets you login through MyAnimeList (and more others, soon...) to rate your favourite shows",
 
   "icons": {
-    "96": "icons/main-logo.svg"
+    "16": "icons/main-logo-16.svg",
+    "32": "icons/main-logo-32.svg",
+    "48": "icons/main-logo-48.svg",
+    "96": "icons/main-logo-96.svg",
+    "128": "icons/main-logo-128.svg"
   },
 
   "background": {
     "scripts": ["background/background.js"],
     "persistent": false
-
   },
 
   "browser_action": {
@@ -40,7 +43,6 @@
     {
       "matches": ["*://www.crunchyroll.com/*"],
       "js": ["content_scripts/crunchyroll/crTracker.js"]
-
     },
     {
       "matches": ["*://static.crunchyroll.com/*"],

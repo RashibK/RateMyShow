@@ -1,26 +1,5 @@
-import { number } from "motion";
 import { getAnimeTitleinCR } from "../../utils/animeUtils.js";
 import { escapeRegExp } from "../../utils/regexUtils.js";
-import { watchRouteChanges } from "../watchRouteChange.js";
-
-// watchRouteChanges((newUrl) => {
-//   console.log("new url:", newUrl);
-//   extractAnimeInfoFromCR();
-// });
-
-// // when page is loaded
-// if (url.pathname.includes("/watch/")) {
-//   console.log("user is on the watch page!!");
-//   extractAnimeInfoFromCR();
-// }
-
-// async function startCRTracker() {
-//   const url = new URL(window.location.href);
-//   if (!url.pathname.includes("/watch/")) return;
-
-//   console.log("User is on watch page");
-//   const info = await extractAnimeInfoFromCR();
-// }
 
 async function extractAnimeInfoFromCR() {
   let animeTitleEl;

@@ -1,7 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { malRefreshAccessToken } from "../features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addAnimeUserData,
   addMovieUserData,

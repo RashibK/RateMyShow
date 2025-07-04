@@ -7,10 +7,7 @@ import {
   deleteAnimeUserData,
 } from "../features/user/userSlice";
 import { onConnectProvider } from "../features/auth/authSlice";
-import {
-  updateConnectedProvider,
-  updateSelectedProvider,
-} from "../features/ui/uiSlice";
+import { updateConnectedProvider } from "../features/ui/uiSlice";
 
 function Login() {
   const dispatch = useDispatch();

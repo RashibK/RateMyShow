@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import RatingBox from "../components/RatingBox";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Film, Heart, Tv2, UserRoundCog } from "lucide-react";
-import { motion } from "motion/react";
-import { Link, useLocation } from "react-router-dom";
-import Settings from "../pages/Settings";
+import { Film, Heart, Tv2 } from "lucide-react";
 
 function Rate({ animeUserData }) {
   const [mediaType, setMediaType] = useState(null);

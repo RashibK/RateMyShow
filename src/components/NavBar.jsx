@@ -2,8 +2,6 @@ import { ChevronLeft, UserRoundCog } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
-import Login from "../pages/Login";
-import { useState } from "react";
 
 function NavBar() {
   const animeUserData = useSelector((state) => state.user.animeUserData);

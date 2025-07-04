@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Slide, ToastContainer, toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingAnimation from "../utils/LoadingAnimation";
-import { Film, Link, Plus, Star, X } from "lucide-react";
+import { Film, Plus, Star, X } from "lucide-react";
 
 function RatingBox({
   mediaType,
