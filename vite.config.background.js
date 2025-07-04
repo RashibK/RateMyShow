@@ -12,4 +12,7 @@ export default defineConfig({
       fileName: () => "background.js",
     },
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });

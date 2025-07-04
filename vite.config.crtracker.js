@@ -12,4 +12,7 @@ export default defineConfig({
       fileName: () => "crTracker.js",
     },
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });

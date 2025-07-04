@@ -4,7 +4,7 @@ import { resolve } from "path";
 export default defineConfig({
   build: {
     outDir: "dist/content_scripts/crunchyroll",
- emptyOutDir: false,
+    emptyOutDir: false,
     lib: {
       entry: resolve(
         __dirname,
@@ -14,5 +14,8 @@ export default defineConfig({
       formats: ["iife"],
       fileName: () => "injectIntoCR.js",
     },
+  },
+  esbuild: {
+    drop: ["console", "debugger"],
   },
 });

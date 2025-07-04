@@ -11,4 +11,7 @@ export default defineConfig({
       input: resolve(__dirname, "index.html"),
     },
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
 });
