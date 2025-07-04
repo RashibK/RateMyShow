@@ -47,7 +47,11 @@ function Rate({ animeUserData }) {
 
   return (
     <>
-      <div className="bg-transparent text-white flex flex-col">
+      <div
+        className={`bg-transparent text-white flex flex-col duration-300 ${
+          mediaType ? "blur-sm brightness-75" : ""
+        }`}
+      >
         {/* Content */}
         <div className="flex-1 flex justify-center px-4 py-6">
           <div className="w-full max-w-[440px] bg-[#111418] rounded-2xl border border-[#1f2937] shadow-lg p-6 flex flex-col gap-6">
