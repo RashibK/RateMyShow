@@ -26,6 +26,8 @@ export async function getProviderIdsFromTitle(metaData) {
         nextAiringEpisode {
           episode
         }
+        averageScore
+        genres
       }
 }`;
 

@@ -47,7 +47,7 @@ function Rate({ animeUserData }) {
 
   return (
     <>
-      <div className="bg-[#0B0F10] text-white flex flex-col">
+      <div className="bg-transparent text-white flex flex-col">
         {/* Content */}
         <div className="flex-1 flex justify-center px-4 py-6">
           <div className="w-full max-w-[440px] bg-[#111418] rounded-2xl border border-[#1f2937] shadow-lg p-6 flex flex-col gap-6">
@@ -147,39 +147,3 @@ function Rate({ animeUserData }) {
 }
 
 export default Rate;
-
-{
-  /* <div className="flex flex-col items-center justify-start h-[calc(600px-52px)] px-4 pt-4 bg-[#0B0F10]"> */
-}
-{
-  /* <div className="bg-[#0B0F10] w-full max-w-[440px] h-full rounded-xl border border-[#1f2937] shadow-md flex flex-col justify-start p-4"> */
-}
-{
-  /* Greeting Section */
-}
-{
-  /* <div className="mb-8">
-    <h1 className="text-3xl font-semibold text-white leading-snug">
-      Hello, <span className="text-[#4CC9F0]">{animeUserData?.username}</span>
-    </h1>
-  </div> */
-}
-
-{
-  /* Button Section */
-}
-{
-  /* <div className="flex flex-col gap-4">
-    <button className="w-full py-4 px-6 rounded-xl text-white text-base font-medium bg-[#1f2937] hover:bg-[#374151] hover:shadow-md transition-all duration-200">
-      Rate Anime
-    </button>
-    <button className="w-full py-4 px-6 rounded-xl text-white text-base font-medium bg-[#1f2937] hover:bg-[#374151] hover:shadow-md transition-all duration-200">
-      Rate Movie
-    </button>
-    <button className="w-full py-4 px-6 rounded-xl text-white text-base font-medium bg-[#1f2937] hover:bg-[#374151] hover:shadow-md transition-all duration-200">
-      Rate Show
-    </button>
-  </div>
-</div> */
-}
-// </div>
