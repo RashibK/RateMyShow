@@ -7,6 +7,7 @@ import {
   addMovieUserData,
   addTvShowUserData,
 } from "../features/user/userSlice";
+import LoadingAnimation from "./LoadingAnimation";
 function PrivateRoutes() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(false);
@@ -54,7 +55,7 @@ function PrivateRoutes() {
     getUserData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingAnimation />
 
   return userData ? <Outlet /> : <Navigate to="/login" />;
 }
