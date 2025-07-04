@@ -5,8 +5,6 @@ export default defineConfig({
   build: {
     outDir: "dist/background",
     emptyOutDir: false,
-    sourcemap: true,
-    minify: false,
     lib: {
       entry: resolve(__dirname, "src/background/background.js"),
       name: "background",

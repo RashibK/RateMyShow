@@ -4,9 +4,7 @@ import { resolve } from "path";
 export default defineConfig({
   build: {
     outDir: "dist/content_scripts/crunchyroll",
-    emptyOutDir: false,
-    sourcemap: true,
-    minify: false,
+ emptyOutDir: false,
     lib: {
       entry: resolve(
         __dirname,

@@ -106,6 +106,64 @@ async function waitForElementtoLoad(selector, timeout = 5000) {
     }, 100);
   });
 }
+function showToast(message, type = "warning") {
+  const toast = document.createElement("div");
+
+  const icons = {
+    warning: { symbol: "⚠️", color: "#ff9800" },
+    error: { symbol: "❌", color: "#f44336" },
+    success: { symbol: "✅", color: "#4caf50" },
+    info: { symbol: "ℹ️", color: "#2196f3" },
+  };
+
+  const config = icons[type] || icons.warning;
+
+  toast.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="
+        font-size: 20px;
+        flex-shrink: 0;
+      ">${config.symbol}</div>
+      <span style="flex: 1; line-height: 1.4;">${message}</span>
+    </div>
+  `;
+
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border-left: 4px solid ${config.color};
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    max-width: 400px;
+    min-width: 320px;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+  `;
+
+  document.body.appendChild(toast);
+
+  // Animate in - slide down from top
+  setTimeout(() => {
+    toast.style.opacity = "1";
+    toast.style.transform = "translate(-50%, 0)";
+  }, 10);
+
+  // Auto remove after 4 seconds - slide back up
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translate(-50%, -100%)";
+    setTimeout(() => toast.remove(), 500);
+  }, 4000);
+}
 
 // message listener
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -121,6 +179,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })();
     return true;
   } else if (message.type === "send_alert") {
-    alert(message.message);
+    showToast(message.message);
   }
 });
