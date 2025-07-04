@@ -2,11 +2,14 @@ import {
   createCodeVerifier,
   createStateToken,
 } from "../../../public/background/oAuthUtils.js";
-import { getUserDataFromAnyProviderResponse } from "../background.js";
+import {
+  getUserDataFromAnyProviderResponse,
+  updateConnectedProviderBG,
+} from "../background.js";
 
 export const MAL_CLIENT_ID = "db72b0c4364bb89f8c4bc7991b734bee";
 export const MAL_REDIRECT_URI = browser.identity.getRedirectURL();
-console.log('Here is my MAL_REDIRECT_URI: ', MAL_REDIRECT_URI)
+console.log("Here is my MAL_REDIRECT_URI: ", MAL_REDIRECT_URI);
 
 export async function MALAuth() {
   console.log("I am inside of MAL auth");
@@ -151,29 +154,40 @@ export async function refreshAccessToken() {
 }
 
 export async function getMALUserData(sendResponse) {
-  const { malRefreshToken } = await browser.storage.local.get(
-    "myanimelist_refresh_token"
-  );
+  try {
+    let malRefreshToken  = await browser.storage.local.get(
+      "myanimelist_refresh_token"
+    );
+    malRefreshToken = malRefreshToken.myanimelist_refresh_token;
 
-  const userData = await browser.storage.session.get("connected_providers");
-  const malData = userData?.connected_providers?.anime;
+    const userData = await browser.storage.session.get("connected_providers");
+    const malData = userData?.connected_providers?.anime;
 
-  console.log("here is the user data that i get from bg: ", malData);
+    console.log("here is the user data that i get from bg: ", malData);
 
-  if (malData && malData.userData != null) {
-    sendResponse(malData.userData);
-  } else {
-    if (malRefreshToken) {
-      const userData = await refreshAccessToken().then(fetchUserData);
-      console.log(
-        "This is the userData of when there was resfresh token, but had to get userData:",
-        userData
-      );
-      updateConnectedProviderBG("MyAnimeList", userData);
-      sendResponse(userData);
+    if (malData && malData?.userData != null) {
+      if (sendResponse) {
+        sendResponse(malData.userData);
+      }
     } else {
-      // meaning it's the first time user is logging in
-      sendResponse({ message: `no_myanimelist_user_data` });
+      if (malRefreshToken) {
+        const userData = await refreshAccessToken().then(fetchUserData);
+        console.log(
+          "This is the userData of when there was resfresh token, but had to get userData:",
+          userData
+        );
+        await updateConnectedProviderBG("MyAnimeList", userData);
+        if (sendResponse) {
+          sendResponse(userData);
+        }
+      } else {
+        // meaning it's the first time user is logging in
+        if (sendResponse) {
+          sendResponse({ message: `no_myanimelist_user_data` });
+        }
+      }
     }
+  } catch (error) {
+    console.log("Error in getMALUserData: ", error);
   }
 }

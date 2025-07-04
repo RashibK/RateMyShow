@@ -13,8 +13,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       specificProvider.getUserData(sendResponse);
     } else if (provider == "all") {
       (async () => {
-        console.log("I am inside of getting data");
-        const data = await getAllConnectedProviders();
+        let data = await getAllConnectedProviders();
+        //  if no connected providers - check for Tokens;
+        if (!(data?.anime || data?.movie || data?.tvShow)) {
+          await checkTokensForAuth(); // For automatically redoing the oauth with api calls if refresh/access tokens are present
+        }
+        data = await getAllConnectedProviders();
         sendResponse(data);
       })();
       return true;
@@ -228,4 +232,32 @@ export async function getCurrentMediaId(message) {
     const dataFromProvider = await getProviderIdsFromTitle(metaData);
     return { metaData, dataFromProvider };
   }
+}
+
+export async function checkTokensForAuth() {
+  console.log("I am inside of checkTokensForAuth");
+
+  // check for refresh/access tokens for anime providers
+  // 1. MyAnimeList
+  const malRefreshT = await browser.storage.local.get(
+    "myanimelist_refresh_token"
+  );
+
+  const malRefreshToken = malRefreshT.myanimelist_refresh_token;
+  if (malRefreshToken) {
+    await providerMap.MyAnimeList.getUserData();
+    console.log("MA Token is there", malRefreshToken);
+  }
+
+  // 2. AniList
+  const anilist_access_token = await browser.storage.local.get(
+    "anilist_access_token"
+  );
+  const ANILIST_ACCESS_TOKEN = anilist_access_token.anilist_access_token;
+  if (ANILIST_ACCESS_TOKEN) {
+    await providerMap.AniList.getUserData();
+    console.log("AniList Access Token is there", ANILIST_ACCESS_TOKEN);
+  }
+
+  // check for refresh/access tokens for movies/TV providers - TODO
 }

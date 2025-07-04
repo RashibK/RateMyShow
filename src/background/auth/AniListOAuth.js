@@ -37,7 +37,7 @@ export async function getAniListUserData(sendResponse) {
   const anilist_access_token = await browser.storage.local.get(
     "anilist_access_token"
   );
-  console.log('is the function getting sent properly', sendResponse )
+  console.log("is the function getting sent properly", sendResponse);
   // after logout; send that response, so new auth starts
   if (!anilist_access_token.anilist_access_token) {
     sendResponse({ message: "no_anilist_user_data" });
@@ -83,8 +83,9 @@ export async function getAniListUserData(sendResponse) {
     // user data schema : { username, image}
 
     await browser.storage.session.set({ connected_providers: data });
-    console.log('new auth is over, I am sending the data over:', userData)
+    console.log("new auth is over, I am sending the data over:", userData);
+    if (sendResponse) {
       sendResponse(userData);
-
+    }
   }
 }

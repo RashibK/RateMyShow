@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "RateMyShow",
-  "version": "1.0",
+  "version": "1.0.1",
 
   "description": "Lets you login through MyAnimeList (and more others, soon...) to rate your favourite shows",
 
