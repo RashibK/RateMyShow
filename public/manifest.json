@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "RateMyShow",
-  "version": "1.0.3",
+  "version": "1.0.6",
 
   "description": "Lets you login through MyAnimeList (and more others, soon...) to rate your favourite shows",
 
@@ -14,7 +14,7 @@
   },
 
   "background": {
-    "scripts": ["background/background.js"],
+    "scripts": ["background.js"],
     "persistent": false
   },
 

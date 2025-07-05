@@ -3,7 +3,7 @@ import { resolve } from "path";
 
 export default defineConfig({
   build: {
-    outDir: "dist/content_scripts/crunchyroll",
+    outDir: "dist",
     emptyOutDir: false,
     lib: {
       entry: resolve(
@@ -12,10 +12,17 @@ export default defineConfig({
       ),
       name: "injectIntoCR",
       formats: ["iife"],
-      fileName: () => "injectIntoCR.js",
+      fileName: () => "content_scripts/crunchyroll/injectIntoCR.js",
+    },
+    rollupOptions: {
+      output: {
+        dir: "dist",
+        entryFileNames: "content_scripts/crunchyroll/injectIntoCR.js",
+      },
     },
   },
   esbuild: {
     drop: ["console", "debugger"],
+    target: "es2020",
   },
 });

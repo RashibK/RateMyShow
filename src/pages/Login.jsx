@@ -159,7 +159,7 @@ function Login() {
                 </>
               ) : (
                 <>
-                  <span className="text-zinc-400 text-base">Not Connected</span>
+                  <span className="text-zinc-400 text-base">Coming Soon...</span>
                   <div className="content-center">
                     <button className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-sm">
                       Connect
@@ -202,7 +202,7 @@ function Login() {
                 </>
               ) : (
                 <>
-                  <span className="text-zinc-400 text-base">Not Connected</span>
+                  <span className="text-zinc-400 text-base">Coming Soon...</span>
                   <div className="content-center">
                     <button className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-sm">
                       Connect

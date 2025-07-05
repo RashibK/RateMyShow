@@ -194,10 +194,14 @@ export async function handleMediaAction(message, mediaAction) {
       const mediaIdDetails = await getProviderIdsFromTitle(metaData);
       specificProviderMap?.[mediaAction](metaData, mediaIdDetails);
     } else {
-      await browser.tabs.sendMessage(tabId, {
-        type: "send_alert",
-        message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page.`,
-      });
+      const isSent = await browser.storage.session.get("alert_sent");
+      if (!isSent.alert_sent) {
+        await browser.storage.session.set({ alert_sent: true });
+        await browser.tabs.sendMessage(tabId, {
+          type: "send_alert",
+          message: `You are not logged in. Log in to any ${providerCategory} Provider and refresh the page.`,
+        });
+      }
     }
   } catch (err) {
     console.log("Error in Background: ", err);
